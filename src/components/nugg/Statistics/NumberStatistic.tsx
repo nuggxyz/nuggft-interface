@@ -9,31 +9,31 @@ import StatisticsWrapper, { StatisticsProps } from './StatisticsWrapper/Statisti
 import styles from './Statistics.styles';
 
 type Props = Omit<StatisticsProps, 'children'> & {
-    value: PairInt | Decimal | number;
-    percent?: boolean;
+	value: PairInt | Decimal | number;
+	percent?: boolean;
 };
 const NumberStatistic: FC<Props> = ({ value, percent = false, ...props }) => {
-    const val = useMemo(
-        () =>
-            value
-                ? value instanceof EthInt
-                    ? value?.decimal.toNumber()
-                    : value instanceof Decimal
-                    ? value?.toNumber()
-                    : value
-                : 0,
-        [value],
-    );
-    return (
-        <StatisticsWrapper {...props}>
-            <CurrencyText
-                // image={props.image}
-                textStyle={styles.value}
-                value={val}
-                percent={percent}
-            />
-        </StatisticsWrapper>
-    );
+	const val = useMemo(
+		() =>
+			value
+				? value instanceof EthInt
+					? value?.decimal.toNumber()
+					: value instanceof Decimal
+					? value?.toNumber()
+					: value
+				: 0,
+		[value],
+	);
+	return (
+		<StatisticsWrapper {...props}>
+			<CurrencyText
+				// image={props.image}
+				textStyle={styles.value}
+				value={val}
+				percent={percent}
+			/>
+		</StatisticsWrapper>
+	);
 };
 
 export default React.memo(NumberStatistic);

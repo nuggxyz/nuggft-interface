@@ -2,20 +2,20 @@ import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import { parseEther, formatUnits } from '@ethersproject/units';
 
 export const toEth = (num: string): BigNumber => {
-    return parseEther(num);
+	return parseEther(num);
 };
 
 export const fromEth = (num: BigNumberish | string): string => {
-    let parsedNum = num;
-    if (typeof num === 'string') {
-        parsedNum = BigNumber.from(num);
-    }
-    if (parsedNum === '0.0') return '0';
-    const res = formatUnits(parsedNum);
+	let parsedNum = num;
+	if (typeof num === 'string') {
+		parsedNum = BigNumber.from(num);
+	}
+	if (parsedNum === '0.0') return '0';
+	const res = formatUnits(parsedNum);
 
-    if (res === '0.0') return '0';
+	if (res === '0.0') return '0';
 
-    return res;
+	return res;
 };
 
 export const ETH_ONE = toEth('1');

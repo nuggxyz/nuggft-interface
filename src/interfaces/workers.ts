@@ -1,5 +1,5 @@
 export enum Events {
-    Mint = 'Mint',
+	Mint = 'Mint',
 }
 
 // interface BaseEvent {

@@ -1,10 +1,10 @@
 [
-    {
-        "name": "metamask",
-        "image": "../assets/images/nugg/metamask.png"
-    },
-    {
-        "name": "walletConnect",
-        "image": "../assets/images/nugg/walletConnectIcon.png"
-    }
+	{
+		"name": "metamask",
+		"image": "../assets/images/nugg/metamask.png"
+	},
+	{
+		"name": "walletConnect",
+		"image": "../assets/images/nugg/walletConnectIcon.png"
+	}
 ]

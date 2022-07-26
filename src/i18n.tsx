@@ -8,51 +8,51 @@ import client from '@src/client/index';
 import { initialLocale, useLocale } from './hooks/useLocale';
 
 interface ProviderProps {
-    locale: SupportedLocale;
-    forceRenderAfterLocaleChange?: boolean;
-    onActivate?: (locale: SupportedLocale) => void;
-    children: ReactNode;
+	locale: SupportedLocale;
+	forceRenderAfterLocaleChange?: boolean;
+	onActivate?: (locale: SupportedLocale) => void;
+	children: ReactNode;
 }
 
 const Provider = ({
-    locale,
-    forceRenderAfterLocaleChange = true,
-    onActivate,
-    children,
+	locale,
+	forceRenderAfterLocaleChange = true,
+	onActivate,
+	children,
 }: ProviderProps) => {
-    useEffect(() => {
-        dynamicActivate(locale)
-            .then(() => onActivate?.(locale))
-            .catch((error) => {
-                console.error('Failed to activate locale', locale, error);
-            });
-    }, [locale, onActivate]);
+	useEffect(() => {
+		dynamicActivate(locale)
+			.then(() => onActivate?.(locale))
+			.catch((error) => {
+				console.error('Failed to activate locale', locale, error);
+			});
+	}, [locale, onActivate]);
 
-    return (
-        <I18nProvider forceRenderOnLocaleChange={forceRenderAfterLocaleChange} i18n={i18n}>
-            {children}
-        </I18nProvider>
-    );
+	return (
+		<I18nProvider forceRenderOnLocaleChange={forceRenderAfterLocaleChange} i18n={i18n}>
+			{children}
+		</I18nProvider>
+	);
 };
 
 void dynamicActivate(initialLocale);
 
 export default ({ children }: { children: ReactNode }) => {
-    const locale = useLocale();
+	const locale = useLocale();
 
-    const updateLocale = client.mutate.updateLocale();
+	const updateLocale = client.mutate.updateLocale();
 
-    const onActivate = useCallback(
-        (_locale: SupportedLocale) => {
-            document.documentElement.setAttribute('lang', _locale);
-            updateLocale(_locale); // stores the selected locale to persist across sessions
-        },
-        [updateLocale],
-    );
+	const onActivate = useCallback(
+		(_locale: SupportedLocale) => {
+			document.documentElement.setAttribute('lang', _locale);
+			updateLocale(_locale); // stores the selected locale to persist across sessions
+		},
+		[updateLocale],
+	);
 
-    return (
-        <Provider locale={locale} forceRenderAfterLocaleChange={false} onActivate={onActivate}>
-            {children}
-        </Provider>
-    );
+	return (
+		<Provider locale={locale} forceRenderAfterLocaleChange={false} onActivate={onActivate}>
+			{children}
+		</Provider>
+	);
 };

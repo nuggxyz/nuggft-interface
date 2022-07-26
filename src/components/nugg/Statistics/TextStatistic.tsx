@@ -6,21 +6,21 @@ import StatisticsWrapper, { StatisticsProps } from './StatisticsWrapper/Statisti
 import styles from './Statistics.styles';
 
 type Props = Omit<StatisticsProps, 'children'> & {
-    value: string;
-    percent?: boolean;
+	value: string;
+	percent?: boolean;
 };
 const TextStatistic: FC<Props> = ({ value, ...props }) => {
-    return (
-        <StatisticsWrapper {...props}>
-            <Text
-                textStyle={{
-                    ...styles.value,
-                }}
-            >
-                {value}
-            </Text>
-        </StatisticsWrapper>
-    );
+	return (
+		<StatisticsWrapper {...props}>
+			<Text
+				textStyle={{
+					...styles.value,
+				}}
+			>
+				{value}
+			</Text>
+		</StatisticsWrapper>
+	);
 };
 
 export default React.memo(TextStatistic);

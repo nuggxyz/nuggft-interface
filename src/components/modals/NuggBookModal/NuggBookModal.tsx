@@ -5,7 +5,7 @@ import PageWrapperDesktop from '@src/components/nuggbook/PageWrapperDesktop';
 type Props = Record<string, never>;
 
 const NuggBookModal: FunctionComponent<Props> = () => {
-    return <PageWrapperDesktop />;
+	return <PageWrapperDesktop />;
 };
 
 export default NuggBookModal;

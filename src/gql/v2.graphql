@@ -1,78 +1,78 @@
 fragment v2Epoch on Epoch {
-    id
-    swaps(orderBy: top, orderDirection: asc) {
-        id
-        top
-        leader {
-            id
-        }
+	id
+	swaps(orderBy: top, orderDirection: asc) {
+		id
+		top
+		leader {
+			id
+		}
 
-        owner {
-            id
-        }
-        commitBlock
-        numOffers
-    }
-    itemSwaps {
-        id
-        top
-        leader {
-            id
-        }
-        owner {
-            id
-        }
-        commitBlock
-        numOffers
-    }
+		owner {
+			id
+		}
+		commitBlock
+		numOffers
+	}
+	itemSwaps {
+		id
+		top
+		leader {
+			id
+		}
+		owner {
+			id
+		}
+		commitBlock
+		numOffers
+	}
 }
 
 query getV2Active {
-    protocol(id: "0x42069") {
-        totalNuggs
-        featureTotals
-        nuggftStakedEth
-        nuggftStakedShares
-        nextEpoch {
-            ...v2Epoch
-        }
-        epoch {
-            ...v2Epoch
-        }
-    }
+	protocol(id: "0x42069") {
+		totalNuggs
+		featureTotals
+		nuggftStakedEth
+		nuggftStakedShares
+		nextEpoch {
+			...v2Epoch
+		}
+		epoch {
+			...v2Epoch
+		}
+	}
 }
 
 query getV2Potential($skip: Int!) {
-    nuggs(
-        where: { live: false, activeSwap_not: null }
-        orderBy: lastOfferEpoch
-        orderDirection: asc
-        skip: $skip
-        first: 100
-    ) {
-        id
-        activeSwap {
-            id
-            top
-            owner {
-                id
-            }
-        }
-    }
-    items(
-        where: { live: false }
-        orderBy: lastOfferEpoch
-        orderDirection: asc
-        skip: $skip
-        first: 100
-    ) {
-        id
-        swaps(where: { endingEpoch: null, canceledEpoch: null }) {
-            id
-            top
-            owner {
-                id
-            }
-        }
-    }
+	nuggs(
+		where: { live: false, activeSwap_not: null }
+		orderBy: lastOfferEpoch
+		orderDirection: asc
+		skip: $skip
+		first: 100
+	) {
+		id
+		activeSwap {
+			id
+			top
+			owner {
+				id
+			}
+		}
+	}
+	items(
+		where: { live: false }
+		orderBy: lastOfferEpoch
+		orderDirection: asc
+		skip: $skip
+		first: 100
+	) {
+		id
+		swaps(where: { endingEpoch: null, canceledEpoch: null }) {
+			id
+			top
+			owner {
+				id
+			}
+		}
+	}
 }

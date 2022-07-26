@@ -1,34 +1,34 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 
 function useInterval(callback: () => Promise<void> | void, delay: number | null) {
-    const savedCallback = useRef(callback);
+	const savedCallback = useRef(callback);
 
-    // Remember the latest callback if it changes.
+	// Remember the latest callback if it changes.
 
-    useLayoutEffect(() => {
-        savedCallback.current = callback;
-    }, [callback]);
+	useLayoutEffect(() => {
+		savedCallback.current = callback;
+	}, [callback]);
 
-    // Set up the interval.
+	// Set up the interval.
 
-    useEffect(() => {
-        // Don't schedule if no delay is specified.
+	useEffect(() => {
+		// Don't schedule if no delay is specified.
 
-        // Note: 0 is a valid value for delay.
+		// Note: 0 is a valid value for delay.
 
-        if (!delay && delay !== 0) {
-            return;
-        }
+		if (!delay && delay !== 0) {
+			return;
+		}
 
-        const id = setInterval(() => {
-            void savedCallback.current();
-        }, delay);
+		const id = setInterval(() => {
+			void savedCallback.current();
+		}, delay);
 
-        // eslint-disable-next-line consistent-return
-        return () => {
-            clearInterval(id);
-        };
-    }, [delay]);
+		// eslint-disable-next-line consistent-return
+		return () => {
+			clearInterval(id);
+		};
+	}, [delay]);
 }
 
 export default useInterval;

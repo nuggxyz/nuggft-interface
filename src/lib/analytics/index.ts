@@ -10,22 +10,22 @@ const GOOGLE_ANALYTICS_ID: string | undefined = process.env.NUGG_APP_GOOGLE_ANAL
 const storedClientId = window.localStorage.getItem(GOOGLE_ANALYTICS_CLIENT_ID_STORAGE_KEY);
 
 if (typeof GOOGLE_ANALYTICS_ID === 'string' && !isCi && process.env.NODE_ENV === 'production') {
-    ReactGA.initialize(GOOGLE_ANALYTICS_ID, {
-        gaOptions: {
-            storage: 'none',
-            storeGac: false,
-            clientId: storedClientId ?? undefined,
-            siteSpeedSampleRate: 100,
-        },
-    });
-    ReactGA.set({
-        anonymizeIp: true,
-        customBrowserType: !isMobile
-            ? 'desktop'
-            : 'web3' in window || 'ethereum' in window
-            ? 'mobileWeb3'
-            : 'mobileRegular',
-    });
+	ReactGA.initialize(GOOGLE_ANALYTICS_ID, {
+		gaOptions: {
+			storage: 'none',
+			storeGac: false,
+			clientId: storedClientId ?? undefined,
+			siteSpeedSampleRate: 100,
+		},
+	});
+	ReactGA.set({
+		anonymizeIp: true,
+		customBrowserType: !isMobile
+			? 'desktop'
+			: 'web3' in window || 'ethereum' in window
+			? 'mobileWeb3'
+			: 'mobileRegular',
+	});
 } else {
-    ReactGA.initialize('test', { gtagOptions: { debug_mode: true } });
+	ReactGA.initialize('test', { gtagOptions: { debug_mode: true } });
 }

@@ -6,16 +6,16 @@ import * as store from './core/store';
 import * as constants from './constants';
 
 const web3 = {
-    config: {
-        ...config,
-        ...constants,
-    },
-    constants,
-    store,
-    core,
-    ...interfaces,
-    clients,
-    hook: { ...config.priority, ...config.network, ...config.selected },
+	config: {
+		...config,
+		...constants,
+	},
+	constants,
+	store,
+	core,
+	...interfaces,
+	clients,
+	hook: { ...config.priority, ...config.network, ...config.selected },
 };
 
 export default web3;

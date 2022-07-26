@@ -7,70 +7,70 @@ import usePrevious from '@src/hooks/usePrevious';
 import emitter from '@src/emitter';
 
 const useStore = create(
-    combine(
-        {
-            visualViewport: {
-                height: window!.visualViewport?.height,
-                width: window.visualViewport?.width,
-                offsetTop: window.visualViewport?.offsetTop,
+	combine(
+		{
+			visualViewport: {
+				height: window!.visualViewport?.height,
+				width: window.visualViewport?.width,
+				offsetTop: window.visualViewport?.offsetTop,
 
-                pageTop: window.visualViewport?.pageTop,
-            },
-        },
-        (set) => {
-            const resize = () => {
-                document.documentElement.style.setProperty(
-                    '--window-inner-height',
-                    `${window.innerHeight}px`,
-                );
-                set(() => {
-                    return {
-                        visualViewport: {
-                            height: window.visualViewport?.height,
-                            width: window.visualViewport?.width,
-                            offsetTop: window.visualViewport?.offsetTop,
-                            pageTop: window.visualViewport?.pageTop,
-                        },
-                    };
-                });
-            };
+				pageTop: window.visualViewport?.pageTop,
+			},
+		},
+		(set) => {
+			const resize = () => {
+				document.documentElement.style.setProperty(
+					'--window-inner-height',
+					`${window.innerHeight}px`,
+				);
+				set(() => {
+					return {
+						visualViewport: {
+							height: window.visualViewport?.height,
+							width: window.visualViewport?.width,
+							offsetTop: window.visualViewport?.offsetTop,
+							pageTop: window.visualViewport?.pageTop,
+						},
+					};
+				});
+			};
 
-            const onClose = () => {
-                if (window.visualViewport) window.visualViewport.onresize = () => undefined;
-            };
-            const onMount = () => {
-                if (window.visualViewport) window.visualViewport.onresize = resize;
+			const onClose = () => {
+				if (window.visualViewport) window.visualViewport.onresize = () => undefined;
+			};
+			const onMount = () => {
+				if (window.visualViewport) window.visualViewport.onresize = resize;
 
-                return onClose;
-            };
+				return onClose;
+			};
 
-            return { onMount };
-        },
-    ),
+			return { onMount };
+		},
+	),
 );
 
 export type EditScreenState = ReturnType<typeof useStore['getState']>;
 
 export const useVisualViewportUpdater = () => {
-    const callback = useStore((state) => state.onMount);
-    React.useEffect(callback, [callback]);
-    return null;
+	const callback = useStore((state) => state.onMount);
+	React.useEffect(callback, [callback]);
+	return null;
 };
 
 export const useEmitOnKeyboardClose = () => {
-    const vp = useStore((state) => state.visualViewport.height);
-    const prev = usePrevious(vp);
+	const vp = useStore((state) => state.visualViewport.height);
+	const prev = usePrevious(vp);
 
-    React.useEffect(() => {
-        if (vp !== undefined && prev && prev * 1.25 < vp) {
-            emitter.emit(emitter.events.KeyboardClosed, {});
-        }
-    }, [prev, vp]);
+	React.useEffect(() => {
+		if (vp !== undefined && prev && prev * 1.25 < vp) {
+			emitter.emit(emitter.events.KeyboardClosed, {});
+		}
+	}, [prev, vp]);
 
-    return null;
+	return null;
 };
 
 export default {
-    useVisualViewport: () => useStore((state) => state.visualViewport),
-    ...useStore,
+	useVisualViewport: () => useStore((state) => state.visualViewport),
+	...useStore,
 };

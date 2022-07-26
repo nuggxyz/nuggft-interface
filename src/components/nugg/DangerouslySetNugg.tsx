@@ -2,25 +2,25 @@
 import React, { CSSProperties } from 'react';
 
 const getParsed = (input: string) => {
-    if (input.startsWith('ERROR') || input === '') {
-        return '<svg></svg>';
-    }
-    if (input.startsWith('data:image/svg+xml;charset=UTF-8,')) {
-        return input.replace('data:image/svg+xml;charset=UTF-8,', '');
-    }
-    // Buffer.from is the modern version of atob
-    return Buffer.from(input.replace('data:image/svg+xml;base64,', ''), 'base64').toString('utf8');
+	if (input.startsWith('ERROR') || input === '') {
+		return '<svg></svg>';
+	}
+	if (input.startsWith('data:image/svg+xml;charset=UTF-8,')) {
+		return input.replace('data:image/svg+xml;charset=UTF-8,', '');
+	}
+	// Buffer.from is the modern version of atob
+	return Buffer.from(input.replace('data:image/svg+xml;base64,', ''), 'base64').toString('utf8');
 };
 
 const getSvgObject = (input: string) => {
-    const str = input;
-    // .replace('.A.B.C.D.E.F.G.H', ``)
-    // // unessesary - it is the default behavior
-    // // .replace('/svg">', '/svg" preserveAspectRatio="xMidYMid meet"  >')
-    // .replace('</style>', `</style><g  class="R" >`)
-    // .replace('</svg>', '</g></svg>');
+	const str = input;
+	// .replace('.A.B.C.D.E.F.G.H', ``)
+	// // unessesary - it is the default behavior
+	// // .replace('/svg">', '/svg" preserveAspectRatio="xMidYMid meet"  >')
+	// .replace('</style>', `</style><g  class="R" >`)
+	// .replace('</svg>', '</g></svg>');
 
-    return new DOMParser().parseFromString(str, 'image/svg+xml');
+	return new DOMParser().parseFromString(str, 'image/svg+xml');
 };
 
 // const getBoundingBox = (svg: Document) => {
@@ -67,80 +67,80 @@ const getSvgObject = (input: string) => {
 // };
 
 const DangerouslySetNugg = React.memo(
-    ({
-        imageUri,
-        size,
-    }: // style,
-    {
-        imageUri?: Base64EncodedSvg | null;
-        style?: CSSProperties;
-        size: 'thumbnail' | 'showcase';
-    }) => {
-        const id = React.useId();
+	({
+		imageUri,
+		size,
+	}: // style,
+	{
+		imageUri?: Base64EncodedSvg | null;
+		style?: CSSProperties;
+		size: 'thumbnail' | 'showcase';
+	}) => {
+		const id = React.useId();
 
-        React.useEffect(() => {
-            if (imageUri) {
-                const svgString = getParsed(imageUri);
+		React.useEffect(() => {
+			if (imageUri) {
+				const svgString = getParsed(imageUri);
 
-                const svg = getSvgObject(svgString);
+				const svg = getSvgObject(svgString);
 
-                const div = document.getElementById(id) as unknown as SVGElement | undefined;
+				const div = document.getElementById(id) as unknown as SVGElement | undefined;
 
-                if (!div || !svg.rootElement) return;
-                svg.rootElement.id = id;
-                svg.rootElement.classList.add('customized-dotnugg');
+				if (!div || !svg.rootElement) return;
+				svg.rootElement.id = id;
+				svg.rootElement.classList.add('customized-dotnugg');
 
-                div.replaceWith(svg.rootElement);
-            } else {
-                const div = document.getElementById(id);
-                if (!div) return;
-                div.innerHTML = '';
-            }
+				div.replaceWith(svg.rootElement);
+			} else {
+				const div = document.getElementById(id);
+				if (!div) return;
+				div.innerHTML = '';
+			}
 
-            // const box = getBoundingBox(svg);
+			// const box = getBoundingBox(svg);
 
-            // const g = svg.firstElementChild?.firstElementChild?.nextElementSibling;
+			// const g = svg.firstElementChild?.firstElementChild?.nextElementSibling;
 
-            // const scale = getScalar(box);
+			// const scale = getScalar(box);
 
-            // const trans = getTransform(box);
+			// const trans = getTransform(box);
 
-            // if (size === 'showcase') console.log({ box, scale, trans });
+			// if (size === 'showcase') console.log({ box, scale, trans });
 
-            // g.setAttribute('transform', `scale(${scale.value}) translate(${trans.x},${trans.y})`);
+			// g.setAttribute('transform', `scale(${scale.value}) translate(${trans.x},${trans.y})`);
 
-            // g.setAttribute('style', ` transform-origin: center center;`);
-            // g.setAttribute('stroke', `1`);
-            // g.setAttribute('fill', `1`);
+			// g.setAttribute('style', ` transform-origin: center center;`);
+			// g.setAttribute('stroke', `1`);
+			// g.setAttribute('fill', `1`);
 
-            // if (
-            //     userAgent.browser.name === 'Safari' ||
-            //     userAgent.browser.name === 'Mobile Safari' ||
-            //     userAgent.browser.name === 'Firefox'
-            // ) {
-            //     /// // hack to kill the horizontal see-through lines on modern safari
-            //     svg.rootElement.setAttribute(
-            //         'style',
-            //         `stroke-width: ${size === 'thumbnail' ? 1.2 : 1.05}`,
-            //     );
-            //     // tried to solve with these, but none did the trick
-            //     // svg.rootElement.setAttribute('width', '100%');
-            //     // svg.rootElement.setAttribute('image-rendering', 'pixelated');
-            //     // svg.rootElement.setAttribute('stroke-width', '1');
-            //     // svg.rootElement.setAttribute('shape-rendering', 'geometricPrecision');
-            //     // svg.rootElement.setAttribute('vector-effect', 'non-scaling-stroke');
-            //     // svg.rootElement.setAttribute('y', '.5');
-            //     // svg.rootElement.setAttribute('x', '.5');
-            //     // svg.rootElement.setAttribute('transform', `translate(0,0)`);
-            //     // g.setAttribute('shape-rendering', 'crispEdges');
-            // }
-        }, [imageUri, id, size]);
+			// if (
+			//     userAgent.browser.name === 'Safari' ||
+			//     userAgent.browser.name === 'Mobile Safari' ||
+			//     userAgent.browser.name === 'Firefox'
+			// ) {
+			//     /// // hack to kill the horizontal see-through lines on modern safari
+			//     svg.rootElement.setAttribute(
+			//         'style',
+			//         `stroke-width: ${size === 'thumbnail' ? 1.2 : 1.05}`,
+			//     );
+			//     // tried to solve with these, but none did the trick
+			//     // svg.rootElement.setAttribute('width', '100%');
+			//     // svg.rootElement.setAttribute('image-rendering', 'pixelated');
+			//     // svg.rootElement.setAttribute('stroke-width', '1');
+			//     // svg.rootElement.setAttribute('shape-rendering', 'geometricPrecision');
+			//     // svg.rootElement.setAttribute('vector-effect', 'non-scaling-stroke');
+			//     // svg.rootElement.setAttribute('y', '.5');
+			//     // svg.rootElement.setAttribute('x', '.5');
+			//     // svg.rootElement.setAttribute('transform', `translate(0,0)`);
+			//     // g.setAttribute('shape-rendering', 'crispEdges');
+			// }
+		}, [imageUri, id, size]);
 
-        return <svg id={id} />;
+		return <svg id={id} />;
 
-        // return <div style={{ ...style, ...strokeWidth }} id={id} />;
-    },
-    (prev, curr) => prev.imageUri === curr.imageUri,
+		// return <div style={{ ...style, ...strokeWidth }} id={id} />;
+	},
+	(prev, curr) => prev.imageUri === curr.imageUri,
 );
 
 export default DangerouslySetNugg;

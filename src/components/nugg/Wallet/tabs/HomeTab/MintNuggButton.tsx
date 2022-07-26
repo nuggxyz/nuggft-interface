@@ -8,14 +8,14 @@ import styles from './HomeTab.styles';
 type Props = Record<string, unknown>;
 
 const MintNuggButton: FunctionComponent<Props> = () => {
-    return (
-        <Button
-            label={t`Mint a Nugg`}
-            buttonStyle={styles.mintNuggButton}
-            textStyle={styles.mintNuggButtonText}
-            onClick={() => ''}
-        />
-    );
+	return (
+		<Button
+			label={t`Mint a Nugg`}
+			buttonStyle={styles.mintNuggButton}
+			textStyle={styles.mintNuggButtonText}
+			onClick={() => ''}
+		/>
+	);
 };
 
 export default MintNuggButton;

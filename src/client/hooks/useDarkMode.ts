@@ -4,13 +4,13 @@ import { Theme } from '@src/client/interfaces';
 import client from '..';
 
 export function useTheme(): Theme | undefined {
-    const { user, media } = client.live.darkmode();
+	const { user, media } = client.live.darkmode();
 
-    return user === undefined ? media : user;
+	return user === undefined ? media : user;
 }
 
 export function useDarkMode(): boolean {
-    const theme = useTheme();
+	const theme = useTheme();
 
-    return theme === Theme.DARK;
+	return theme === Theme.DARK;
 }

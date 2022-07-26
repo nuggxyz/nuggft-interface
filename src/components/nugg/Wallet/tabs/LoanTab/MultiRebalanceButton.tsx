@@ -5,9 +5,9 @@ import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/Feedb
 import web3 from '@src/web3';
 import client from '@src/client';
 import {
-    useNuggftV1,
-    usePrioritySendTransaction,
-    useTransactionManager2,
+	useNuggftV1,
+	usePrioritySendTransaction,
+	useTransactionManager2,
 } from '@src/contracts/useContract';
 
 import styles from './LoanTab.styles';
@@ -15,35 +15,35 @@ import styles from './LoanTab.styles';
 type Props = Record<string, never>;
 
 const MultiRebalanceButton: FunctionComponent<Props> = () => {
-    const address = web3.hook.usePriorityAccount();
-    const provider = web3.hook.usePriorityProvider();
-    const nuggft = useNuggftV1();
+	const address = web3.hook.usePriorityAccount();
+	const provider = web3.hook.usePriorityProvider();
+	const nuggft = useNuggftV1();
 
-    const [send, , hash, , ,] = usePrioritySendTransaction();
-    useTransactionManager2(provider, hash);
-    const chainId = web3.hook.usePriorityChainId();
-    const unclaimedOffers = client.user.useNuggs();
+	const [send, , hash, , ,] = usePrioritySendTransaction();
+	useTransactionManager2(provider, hash);
+	const chainId = web3.hook.usePriorityChainId();
+	const unclaimedOffers = client.user.useNuggs();
 
-    const { tokenIds } = useMemo(() => {
-        const _tokenIds: string[] = [];
-        unclaimedOffers.forEach((x) => {
-            if (x.activeLoan) _tokenIds.push(x.tokenId);
-        });
-        return { tokenIds: _tokenIds };
-    }, [unclaimedOffers]);
+	const { tokenIds } = useMemo(() => {
+		const _tokenIds: string[] = [];
+		unclaimedOffers.forEach((x) => {
+			if (x.activeLoan) _tokenIds.push(x.tokenId);
+		});
+		return { tokenIds: _tokenIds };
+	}, [unclaimedOffers]);
 
-    return unclaimedOffers?.length > 0 ? (
-        <FeedbackButton
-            feedbackText="Check Wallet..."
-            buttonStyle={styles.multiLoanButton}
-            textStyle={styles.multiLoanButtonText}
-            label={t`Rebalance all (${tokenIds.length})`}
-            onClick={() => {
-                if (address && chainId && provider)
-                    void send(nuggft.populateTransaction.rebalance(tokenIds));
-            }}
-        />
-    ) : null;
+	return unclaimedOffers?.length > 0 ? (
+		<FeedbackButton
+			feedbackText="Check Wallet..."
+			buttonStyle={styles.multiLoanButton}
+			textStyle={styles.multiLoanButtonText}
+			label={t`Rebalance all (${tokenIds.length})`}
+			onClick={() => {
+				if (address && chainId && provider)
+					void send(nuggft.populateTransaction.rebalance(tokenIds));
+			}}
+		/>
+	) : null;
 };
 
 export default MultiRebalanceButton;

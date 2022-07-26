@@ -1,33 +1,33 @@
 // eslint-disable-next-line no-shadow
 export enum Route {
-    SwapItem,
-    ViewItem,
-    ViewNugg,
-    SwapNugg,
-    Home,
+	SwapItem,
+	ViewItem,
+	ViewNugg,
+	SwapNugg,
+	Home,
 }
 
 // eslint-disable-next-line no-shadow
 export enum Feature {
-    Base,
-    Eyes,
-    Mouth,
-    Hair,
-    Hat,
-    Back,
-    Hold,
-    Neck,
+	Base,
+	Eyes,
+	Mouth,
+	Hair,
+	Hat,
+	Back,
+	Hold,
+	Neck,
 }
 
 interface BaseRoute {
-    type: 'item' | 'nugg';
+	type: 'item' | 'nugg';
 }
 
 export interface SwapItemRoute extends BaseRoute, ItemData {
-    type: 'item';
+	type: 'item';
 }
 export interface SwapNuggRoute extends BaseRoute, NuggData {
-    type: 'nugg';
+	type: 'nugg';
 }
 
 export type ViewRoute = Route.ViewItem | Route.ViewNugg;
@@ -37,14 +37,14 @@ export type RawNuggId = `${number}`;
 export type RawItemId = `${number}`;
 
 interface ItemData {
-    tokenId: ItemId;
-    feature: Feature;
-    position: number;
+	tokenId: ItemId;
+	feature: Feature;
+	position: number;
 }
 
 interface NuggData {
-    tokenId: NuggId;
-    idnum: number;
+	tokenId: NuggId;
+	idnum: number;
 }
 
 // export type ViewRoutes = ViewItemRoute | ViewNuggRoute;

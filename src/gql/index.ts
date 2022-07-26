@@ -30,105 +30,105 @@ import { StrictTypedTypePolicies } from './types.generated';
 // });
 
 export const buildApolloHttpLink = (http: string) => {
-    const { generateApolloResponseErrorMiddleware, generateApolloResponseMiddleware } =
-        client.health.getState();
+	const { generateApolloResponseErrorMiddleware, generateApolloResponseMiddleware } =
+		client.health.getState();
 
-    return generateApolloResponseMiddleware().concat(
-        generateApolloResponseErrorMiddleware().concat(
-            new HttpLink({
-                uri: http,
-                fetch,
-            }),
-        ),
-    );
+	return generateApolloResponseMiddleware().concat(
+		generateApolloResponseErrorMiddleware().concat(
+			new HttpLink({
+				uri: http,
+				fetch,
+			}),
+		),
+	);
 };
 
 export const buildApolloSplitLink = (http: string, wss: string) => {
-    const { generateApolloResponseErrorMiddleware, generateApolloResponseMiddleware } =
-        client.health.getState();
+	const { generateApolloResponseErrorMiddleware, generateApolloResponseMiddleware } =
+		client.health.getState();
 
-    return generateApolloResponseMiddleware().concat(
-        generateApolloResponseErrorMiddleware().concat(
-            split(
-                ({ query }) => {
-                    const definition = getMainDefinition(query);
+	return generateApolloResponseMiddleware().concat(
+		generateApolloResponseErrorMiddleware().concat(
+			split(
+				({ query }) => {
+					const definition = getMainDefinition(query);
 
-                    return (
-                        definition.kind === 'OperationDefinition' &&
-                        definition.operation === 'subscription'
-                    );
-                },
-                new WebSocketLink({
-                    uri: wss,
-                    options: {
-                        reconnect: true,
-                        timeout: 50000,
-                        minTimeout: 30000,
-                        // wsOptionArguments: {
+					return (
+						definition.kind === 'OperationDefinition' &&
+						definition.operation === 'subscription'
+					);
+				},
+				new WebSocketLink({
+					uri: wss,
+					options: {
+						reconnect: true,
+						timeout: 50000,
+						minTimeout: 30000,
+						// wsOptionArguments: {
 
-                        // },
-                        reconnectionAttempts: 100,
-                        // lazy: true,
-                    },
+						// },
+						reconnectionAttempts: 100,
+						// lazy: true,
+					},
 
-                    webSocketImpl: WebSocket,
-                }),
-                buildApolloHttpLink(http),
-            ),
-        ),
-    );
+					webSocketImpl: WebSocket,
+				}),
+				buildApolloHttpLink(http),
+			),
+		),
+	);
 };
 
 const typePolicies: StrictTypedTypePolicies = {
-    Query: {
-        fields: {
-            // nugg: {
-            //     // keyArgs: ['id'],
-            //     // read: (x, b) => {
-            //     //     console.log({ x, b });
-            //     // },
-            //     // merge: (x, b) => {
-            //     //     console.log({ x, b });
-            //     // },
-            // },
-            // item: {
-            //     // keyArgs: ,
-            //     // read: (x, b) => {
-            //     //     console.log({ x, b });
-            //     // },
-            //     // merge: (x, b) => {
-            //     //     console.log({ x, b });
-            //     // },
-            // },
-            // nuggs: {
-            //     // Don't cache separate results based on
-            //     // any of this field's arguments.
-            //     keyArgs: false,
-            //     // Concatenate the incoming list items with
-            //     // the existing list items.
-            //     // eslint-disable-next-line @typescript-eslint/default-param-last
-            //     merge(existing = [], incoming) {
-            //         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            //         return [...existing, ...incoming];
-            //     },
-            // },
-            // items: {
-            //     // Don't cache separate results based on
-            //     // any of this field's arguments.
-            //     keyArgs: false,
-            //     // Concatenate the incoming list items with
-            //     // the existing list items.
-            //     // eslint-disable-next-line @typescript-eslint/default-param-last
-            //     merge(existing: Array<any> = [], incoming: Array<any>) {
-            //         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            //         return [...existing, ...incoming];
-            //     },
-            // },
-        },
-    },
+	Query: {
+		fields: {
+			// nugg: {
+			//     // keyArgs: ['id'],
+			//     // read: (x, b) => {
+			//     //     console.log({ x, b });
+			//     // },
+			//     // merge: (x, b) => {
+			//     //     console.log({ x, b });
+			//     // },
+			// },
+			// item: {
+			//     // keyArgs: ,
+			//     // read: (x, b) => {
+			//     //     console.log({ x, b });
+			//     // },
+			//     // merge: (x, b) => {
+			//     //     console.log({ x, b });
+			//     // },
+			// },
+			// nuggs: {
+			//     // Don't cache separate results based on
+			//     // any of this field's arguments.
+			//     keyArgs: false,
+			//     // Concatenate the incoming list items with
+			//     // the existing list items.
+			//     // eslint-disable-next-line @typescript-eslint/default-param-last
+			//     merge(existing = [], incoming) {
+			//         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+			//         return [...existing, ...incoming];
+			//     },
+			// },
+			// items: {
+			//     // Don't cache separate results based on
+			//     // any of this field's arguments.
+			//     keyArgs: false,
+			//     // Concatenate the incoming list items with
+			//     // the existing list items.
+			//     // eslint-disable-next-line @typescript-eslint/default-param-last
+			//     merge(existing: Array<any> = [], incoming: Array<any>) {
+			//         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+			//         return [...existing, ...incoming];
+			//     },
+			// },
+		},
+	},
 };
 export const buildCache = () => {
-    return new InMemoryCache({
-        typePolicies,
-    });
+	return new InMemoryCache({
+		typePolicies,
+	});
 };

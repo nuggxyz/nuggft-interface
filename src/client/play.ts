@@ -25,60 +25,60 @@ import { combine } from 'zustand/middleware';
 // ) => Combine<PrimaryState, SecondaryState>;
 
 const stateA = combine(
-    {
-        dataA: 0 as number,
-    },
-    (set) => {
-        const closeDataA = () => {
-            set((data) => {
-                // @ts-ignore
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                data.stateB.dataB = -99;
-                // @ts-ignore
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                // data.stateA.dataA = 0;
-                return data;
-            });
-        };
+	{
+		dataA: 0 as number,
+	},
+	(set) => {
+		const closeDataA = () => {
+			set((data) => {
+				// @ts-ignore
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+				data.stateB.dataB = -99;
+				// @ts-ignore
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+				// data.stateA.dataA = 0;
+				return data;
+			});
+		};
 
-        const openDataA = (dataA: number) => {
-            set(() => {
-                return {
-                    dataA,
-                };
-            });
-        };
+		const openDataA = (dataA: number) => {
+			set(() => {
+				return {
+					dataA,
+				};
+			});
+		};
 
-        return { closeDataA, openDataA };
-    },
+		return { closeDataA, openDataA };
+	},
 );
 
 const stateB = combine(
-    {
-        dataB: '0' as string,
-    },
-    (set) => {
-        const closeDataB = () => {
-            set((data) => {
-                // @ts-ignore
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                data.stateA.dataA = -98;
-                // @ts-ignore
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                // data.dataB = -98;
-                return data;
-            });
-        };
-        const openDataB = (dataB: string) => {
-            set(() => {
-                return {
-                    dataB,
-                };
-            });
-        };
+	{
+		dataB: '0' as string,
+	},
+	(set) => {
+		const closeDataB = () => {
+			set((data) => {
+				// @ts-ignore
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+				data.stateA.dataA = -98;
+				// @ts-ignore
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+				// data.dataB = -98;
+				return data;
+			});
+		};
+		const openDataB = (dataB: string) => {
+			set(() => {
+				return {
+					dataB,
+				};
+			});
+		};
 
-        return { closeDataB, openDataB };
-    },
+		return { closeDataB, openDataB };
+	},
 );
 
 type ab = ReturnType<typeof stateB> & ReturnType<typeof stateA>;
@@ -87,35 +87,35 @@ const states = { stateA, stateB };
 
 // @ts-ignore
 const c = create<ab>((...b) => {
-    // @ts-ignore
-    return Object.keys(states).reduce((prev, curr: keyof typeof states) => {
-        // @ts-ignore
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        return { ...prev, [curr]: states[curr](...b) };
-    }, {});
+	// @ts-ignore
+	return Object.keys(states).reduce((prev, curr: keyof typeof states) => {
+		// @ts-ignore
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		return { ...prev, [curr]: states[curr](...b) };
+	}, {});
 });
 
 export const useCheckA = () =>
-    c((state) => {
-        console.log({ state });
-        return state;
-    });
+	c((state) => {
+		console.log({ state });
+		return state;
+	});
 
 export const useCloseB = () =>
-    c((state) => {
-        console.log('B');
-        // @ts-ignore
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        return state.stateB.closeDataB as () => undefined;
-    });
+	c((state) => {
+		console.log('B');
+		// @ts-ignore
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+		return state.stateB.closeDataB as () => undefined;
+	});
 
 export const useCloseA = () =>
-    c((state) => {
-        console.log('A');
-        // @ts-ignore
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        return state.stateA.closeDataA as () => undefined;
-    });
+	c((state) => {
+		console.log('A');
+		// @ts-ignore
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+		return state.stateA.closeDataA as () => undefined;
+	});
 
 // inside index.tsx
 // const Hook = () => {

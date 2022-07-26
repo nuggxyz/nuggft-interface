@@ -1,7 +1,7 @@
 export type NuggJson = {
-    name: string;
-    description: string;
-    image: string;
+	name: string;
+	description: string;
+	image: string;
 };
 
 // export const extractDotNuggBase64 = (jsonBase64: string) => {

@@ -1,17 +1,17 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Launch Firefox",
-            "type": "firefox",
-            "request": "launch",
-            "url": "http://localhost:3000",
-            "pathMappings": [
-                {
-                    "url": "http://localhost:3000/path/to/my-repo/",
-                    "path": "${workspaceFolder}/"
-                }
-            ]
-        }
-    ]
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Launch Firefox",
+			"type": "firefox",
+			"request": "launch",
+			"url": "http://localhost:3000",
+			"pathMappings": [
+				{
+					"url": "http://localhost:3000/path/to/my-repo/",
+					"path": "${workspaceFolder}/"
+				}
+			]
+		}
+	]
 }

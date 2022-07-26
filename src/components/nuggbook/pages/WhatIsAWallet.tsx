@@ -6,38 +6,38 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import { NuggBookPage, Page } from '@src/interfaces/nuggbook';
 
 const WhatIsAWallet: NuggBookPage = ({ setPage }) => {
-    return (
-        <div
-            style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-            }}
-        >
-            <Text size="larger" textStyle={{ padding: '10px' }}>
-                Welcome to Nuggft V1
-            </Text>
-            <Text
-                size="medium"
-                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.regular }}
-            >
-                a decentralized art project on ethereum
-            </Text>
-            <Button
-                label="next"
-                buttonStyle={{
-                    background: lib.colors.gradient,
-                    color: 'white',
-                    borderRadius: lib.layout.borderRadius.large,
-                    marginBottom: '.8rem',
-                    backgroundColor: lib.colors.white,
-                    // width: '5rem',
-                }}
-                onClick={() => setPage(Page.TableOfContents)}
-            />
-        </div>
-    );
+	return (
+		<div
+			style={{
+				justifyContent: 'center',
+				alignItems: 'center',
+				display: 'flex',
+				flexDirection: 'column',
+			}}
+		>
+			<Text size="larger" textStyle={{ padding: '10px' }}>
+				Welcome to Nuggft V1
+			</Text>
+			<Text
+				size="medium"
+				textStyle={{ padding: '15px', ...lib.layout.presets.font.main.regular }}
+			>
+				a decentralized art project on ethereum
+			</Text>
+			<Button
+				label="next"
+				buttonStyle={{
+					background: lib.colors.gradient,
+					color: 'white',
+					borderRadius: lib.layout.borderRadius.large,
+					marginBottom: '.8rem',
+					backgroundColor: lib.colors.white,
+					// width: '5rem',
+				}}
+				onClick={() => setPage(Page.TableOfContents)}
+			/>
+		</div>
+	);
 };
 
 export default WhatIsAWallet;

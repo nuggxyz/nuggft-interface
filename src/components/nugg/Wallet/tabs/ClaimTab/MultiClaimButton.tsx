@@ -5,9 +5,9 @@ import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/Feedb
 import web3 from '@src/web3';
 import client from '@src/client';
 import {
-    useNuggftV1,
-    usePrioritySendTransaction,
-    useTransactionManager2,
+	useNuggftV1,
+	usePrioritySendTransaction,
+	useTransactionManager2,
 } from '@src/contracts/useContract';
 import { NuggftV1 } from '@src/typechain';
 
@@ -16,72 +16,72 @@ import styles from './ClaimTab.styles';
 type Props = Record<string, never>;
 
 export const useMultiClaimArgs = () => {
-    const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
+	const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
 
-    return useMemo(() => {
-        const hello = unclaimedOffers.reduce(
-            (
-                prev: {
-                    sellingTokenIds: string[];
-                    addresses: string[];
-                    buyingTokenIds: string[];
-                    itemIds: string[];
-                },
-                curr,
-            ) => {
-                return {
-                    sellingTokenIds: [
-                        ...prev.sellingTokenIds,
-                        curr.claimParams.sellingTokenId.toRawId(),
-                    ],
-                    addresses: [...prev.addresses, curr.claimParams.address],
-                    buyingTokenIds: [
-                        ...prev.buyingTokenIds,
-                        curr.claimParams.buyingTokenId.toRawId(),
-                    ],
-                    itemIds: [...prev.itemIds, curr.claimParams.itemId.toRawId()],
-                };
-            },
-            { sellingTokenIds: [], addresses: [], buyingTokenIds: [], itemIds: [] },
-        );
-        return [
-            hello.sellingTokenIds,
-            hello.addresses,
-            hello.buyingTokenIds,
-            hello.itemIds,
-        ] as Parameters<NuggftV1['claim']>;
-    }, [unclaimedOffers]);
+	return useMemo(() => {
+		const hello = unclaimedOffers.reduce(
+			(
+				prev: {
+					sellingTokenIds: string[];
+					addresses: string[];
+					buyingTokenIds: string[];
+					itemIds: string[];
+				},
+				curr,
+			) => {
+				return {
+					sellingTokenIds: [
+						...prev.sellingTokenIds,
+						curr.claimParams.sellingTokenId.toRawId(),
+					],
+					addresses: [...prev.addresses, curr.claimParams.address],
+					buyingTokenIds: [
+						...prev.buyingTokenIds,
+						curr.claimParams.buyingTokenId.toRawId(),
+					],
+					itemIds: [...prev.itemIds, curr.claimParams.itemId.toRawId()],
+				};
+			},
+			{ sellingTokenIds: [], addresses: [], buyingTokenIds: [], itemIds: [] },
+		);
+		return [
+			hello.sellingTokenIds,
+			hello.addresses,
+			hello.buyingTokenIds,
+			hello.itemIds,
+		] as Parameters<NuggftV1['claim']>;
+	}, [unclaimedOffers]);
 };
 
 const MultiClaimButton: FunctionComponent<Props> = () => {
-    const sender = web3.hook.usePriorityAccount();
-    const provider = web3.hook.usePriorityProvider();
+	const sender = web3.hook.usePriorityAccount();
+	const provider = web3.hook.usePriorityProvider();
 
-    const chainId = web3.hook.usePriorityChainId();
+	const chainId = web3.hook.usePriorityChainId();
 
-    const nuggft = useNuggftV1(provider);
+	const nuggft = useNuggftV1(provider);
 
-    const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
+	const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
 
-    const args = useMultiClaimArgs();
+	const args = useMultiClaimArgs();
 
-    const [send, , hash, , ,] = usePrioritySendTransaction();
+	const [send, , hash, , ,] = usePrioritySendTransaction();
 
-    useTransactionManager2(provider, hash);
+	useTransactionManager2(provider, hash);
 
-    return unclaimedOffers?.length > 0 ? (
-        <FeedbackButton
-            feedbackText="Check Wallet..."
-            buttonStyle={styles.multiClaimButton}
-            textStyle={styles.multiClaimButtonText}
-            label={t`Claim All`}
-            onClick={() => {
-                if (sender && chainId && provider) {
-                    void send(nuggft.populateTransaction.claim(...args));
-                }
-            }}
-        />
-    ) : null;
+	return unclaimedOffers?.length > 0 ? (
+		<FeedbackButton
+			feedbackText="Check Wallet..."
+			buttonStyle={styles.multiClaimButton}
+			textStyle={styles.multiClaimButtonText}
+			label={t`Claim All`}
+			onClick={() => {
+				if (sender && chainId && provider) {
+					void send(nuggft.populateTransaction.claim(...args));
+				}
+			}}
+		/>
+	) : null;
 };
 
 export default MultiClaimButton;

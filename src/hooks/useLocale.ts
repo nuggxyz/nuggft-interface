@@ -10,40 +10,40 @@ import useParsedQueryString, { parsedQueryString } from './useQueryString';
  * @param maybeSupportedLocale the fuzzy locale identifier
  */
 function parseLocale(maybeSupportedLocale: unknown): SupportedLocale | undefined {
-    if (typeof maybeSupportedLocale !== 'string') return undefined;
-    const lowerMaybeSupportedLocale = maybeSupportedLocale.toLowerCase();
-    return SUPPORTED_LOCALES.find(
-        (locale) =>
-            locale.toLowerCase() === lowerMaybeSupportedLocale ||
-            locale.split('-')[0] === lowerMaybeSupportedLocale,
-    );
+	if (typeof maybeSupportedLocale !== 'string') return undefined;
+	const lowerMaybeSupportedLocale = maybeSupportedLocale.toLowerCase();
+	return SUPPORTED_LOCALES.find(
+		(locale) =>
+			locale.toLowerCase() === lowerMaybeSupportedLocale ||
+			locale.split('-')[0] === lowerMaybeSupportedLocale,
+	);
 }
 
 /**
  * Returns the supported locale read from the user agent (navigator)
  */
 export function navigatorLocale(): SupportedLocale | undefined {
-    if (!navigator.language) return undefined;
+	if (!navigator.language) return undefined;
 
-    const [language, region] = navigator.language.split('-');
+	const [language, region] = navigator.language.split('-');
 
-    if (region) {
-        return parseLocale(`${language}-${region.toUpperCase()}`) ?? parseLocale(language);
-    }
+	if (region) {
+		return parseLocale(`${language}-${region.toUpperCase()}`) ?? parseLocale(language);
+	}
 
-    return parseLocale(language);
+	return parseLocale(language);
 }
 
 function storeLocale(): SupportedLocale | undefined {
-    return client.core.getState().locale ?? undefined;
+	return client.core.getState().locale ?? undefined;
 }
 
 export const initialLocale =
-    parseLocale(parsedQueryString().lng) ?? storeLocale() ?? navigatorLocale() ?? DEFAULT_LOCALE;
+	parseLocale(parsedQueryString().lng) ?? storeLocale() ?? navigatorLocale() ?? DEFAULT_LOCALE;
 
 function useUrlLocale() {
-    const parsed = useParsedQueryString();
-    return parseLocale(parsed.lng);
+	const parsed = useParsedQueryString();
+	return parseLocale(parsed.lng);
 }
 
 /**
@@ -51,10 +51,10 @@ function useUrlLocale() {
  * Stores the query string locale in redux (if set) to persist across sessions
  */
 export function useLocale(): SupportedLocale {
-    const urlLocale = useUrlLocale();
-    const userLocale = client.live.locale();
-    return useMemo(
-        () => urlLocale ?? userLocale ?? navigatorLocale() ?? DEFAULT_LOCALE,
-        [urlLocale, userLocale],
-    );
+	const urlLocale = useUrlLocale();
+	const userLocale = client.live.locale();
+	return useMemo(
+		() => urlLocale ?? userLocale ?? navigatorLocale() ?? DEFAULT_LOCALE,
+		[urlLocale, userLocale],
+	);
 }

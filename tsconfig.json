@@ -1,29 +1,29 @@
 {
-    "compilerOptions": {
-        "jsx": "react",
-        "target": "es2021",
-        "lib": ["dom", "dom.iterable", "esnext", "WebWorker"],
-        "allowJs": true,
-        "skipLibCheck": true,
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "forceConsistentCasingInFileNames": true,
-        "noFallthroughCasesInSwitch": true,
-        "module": "esNext",
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "noEmit": true,
-        "baseUrl": ".",
-        "plugins": [{ "name": "typescript-plugin-css-modules" }],
+	"compilerOptions": {
+		"jsx": "react",
+		"target": "es2021",
+		"lib": ["dom", "dom.iterable", "esnext", "WebWorker"],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true,
+		"noFallthroughCasesInSwitch": true,
+		"module": "esNext",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"noEmit": true,
+		"baseUrl": ".",
+		"plugins": [{ "name": "typescript-plugin-css-modules" }],
 
-        "paths": {
-            "@src/*": ["src/*"]
-        },
-        // "exactOptionalPropertyTypes": true,
-        "types": ["node", "jest"],
-        "strict": true
-    },
-    "include": ["src"],
-    "exclude": ["node_modules"]
+		"paths": {
+			"@src/*": ["src/*"]
+		},
+		// "exactOptionalPropertyTypes": true,
+		"types": ["node", "jest"],
+		"strict": true
+	},
+	"include": ["src"],
+	"exclude": ["node_modules"]
 }

@@ -9,21 +9,21 @@ import { EthInt } from '@src/classes/Fraction';
 import client from '..';
 
 export default () => {
-    const provider = web3.hook.usePriorityProvider();
-    const nuggft = useNuggftV1(provider);
-    const blocknum = client.block.useBlock();
-    const updateStake = client.stake.useUpdate();
+	const provider = web3.hook.usePriorityProvider();
+	const nuggft = useNuggftV1(provider);
+	const blocknum = client.block.useBlock();
+	const updateStake = client.stake.useUpdate();
 
-    const callback = useCallback(async () => {
-        if (nuggft) {
-            const stake = EthInt.fromNuggftV1Stake(await nuggft.stake());
-            updateStake(stake.shares, stake.staked);
-        }
-    }, [nuggft, updateStake]);
+	const callback = useCallback(async () => {
+		if (nuggft) {
+			const stake = EthInt.fromNuggftV1Stake(await nuggft.stake());
+			updateStake(stake.shares, stake.staked);
+		}
+	}, [nuggft, updateStake]);
 
-    useEffect(() => {
-        void callback();
-    }, [blocknum]);
+	useEffect(() => {
+		void callback();
+	}, [blocknum]);
 
-    return null;
+	return null;
 };

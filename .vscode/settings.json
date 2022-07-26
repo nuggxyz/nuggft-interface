@@ -1,45 +1,45 @@
 {
-    "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
-    "editor.detectIndentation": false,
-    "prettier.requireConfig": true,
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.codeActionsOnSave": {
-        "source.fixAll": true
-    },
-    "typescript.inlayHints.parameterNames.enabled": "all",
-    "typescript.inlayHints.variableTypes.enabled": false,
-    "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
-    // "typescript.tsdk": "node_modules/typescript/lib",
-    // "typescript.enablePromptUseWorkspaceTsdk": true,
-    // "typescript.inlayHints.parameterNames.": true,
-    // "cssModules.pathAlias": {
-    //     "@src": "${workspaceFolder}/src"
-    // },
-    // "typescript.implementationsCodeLens.enabled": true,
-    "typescript.tsserver.experimental.enableProjectDiagnostics": true,
-    "eslint.trace.server": "verbose",
-    "gitlens.codeLens.enabled": false,
-    "typescript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": true,
-    "workbench.tree.indent": 16,
-    "terminal.integrated.macOptionClickForcesSelection": true,
-    "githubIssues.createIssueTriggers": ["TODO", "LOOK", "BUG", "FIXME", "ISSUE", "HACK"],
-    "githubPullRequests.queries": [
-        {
-            "label": "Assigned To Me",
-            "query": "is:open assignee:${user}"
-        }
-    ],
-    "git.enableCommitSigning": true,
-    "[ignore]": {
-        "editor.defaultFormatter": "foxundermoon.shell-format"
-    },
-    // "eslint.workingDirectories": ["./"],
-    "eslint.useESLintClass": true,
-    "eslint.alwaysShowStatus": true,
-    "explorer.sortOrder": "type",
-    "explorer.sortOrderLexicographicOptions": "upper",
-    "[dotenv]": {
-        "editor.defaultFormatter": "foxundermoon.shell-format"
-    }
+	"eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+	"editor.detectIndentation": false,
+	"prettier.requireConfig": true,
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.codeActionsOnSave": {
+		"source.fixAll": true
+	},
+	"typescript.inlayHints.parameterNames.enabled": "all",
+	"typescript.inlayHints.variableTypes.enabled": false,
+	"typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+	// "typescript.tsdk": "node_modules/typescript/lib",
+	// "typescript.enablePromptUseWorkspaceTsdk": true,
+	// "typescript.inlayHints.parameterNames.": true,
+	// "cssModules.pathAlias": {
+	//     "@src": "${workspaceFolder}/src"
+	// },
+	// "typescript.implementationsCodeLens.enabled": true,
+	"typescript.tsserver.experimental.enableProjectDiagnostics": true,
+	"eslint.trace.server": "verbose",
+	"gitlens.codeLens.enabled": false,
+	"typescript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": true,
+	"workbench.tree.indent": 16,
+	"terminal.integrated.macOptionClickForcesSelection": true,
+	"githubIssues.createIssueTriggers": ["TODO", "LOOK", "BUG", "FIXME", "ISSUE", "HACK"],
+	"githubPullRequests.queries": [
+		{
+			"label": "Assigned To Me",
+			"query": "is:open assignee:${user}"
+		}
+	],
+	"git.enableCommitSigning": true,
+	"[ignore]": {
+		"editor.defaultFormatter": "foxundermoon.shell-format"
+	},
+	// "eslint.workingDirectories": ["./"],
+	"eslint.useESLintClass": true,
+	"eslint.alwaysShowStatus": true,
+	"explorer.sortOrder": "type",
+	"explorer.sortOrderLexicographicOptions": "upper",
+	"[dotenv]": {
+		"editor.defaultFormatter": "foxundermoon.shell-format"
+	}
 }

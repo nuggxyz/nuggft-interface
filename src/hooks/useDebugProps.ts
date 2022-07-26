@@ -7,12 +7,12 @@
 import { useEffect } from 'react';
 
 const useDebugProps = <T extends object>(props: T, name: string) => {
-    for (const key of Object.keys(props) as (keyof T)[]) {
-        useEffect(() => {
-            console.log(`prop => ${String(key)}`);
-        }, [props[key]]);
-    }
-    console.log(`Rendering ${name || ''}`);
+	for (const key of Object.keys(props) as (keyof T)[]) {
+		useEffect(() => {
+			console.log(`prop => ${String(key)}`);
+		}, [props[key]]);
+	}
+	console.log(`Rendering ${name || ''}`);
 };
 
 export default useDebugProps;

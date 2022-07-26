@@ -5,73 +5,73 @@ import { getAddress } from '@ethersproject/address';
 import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 
 export interface IAddress {
-    hash: string;
-    short: string;
+	hash: string;
+	short: string;
 }
 export class Address implements IAddress {
-    protected _hash: string;
+	protected _hash: string;
 
-    public static ZERO = new Address('0x0000000000000000000000000000000000000000');
+	public static ZERO = new Address('0x0000000000000000000000000000000000000000');
 
-    public static NULL = new Address('0x0000000000000000000000000000000000000069');
+	public static NULL = new Address('0x0000000000000000000000000000000000000069');
 
-    constructor(address: string) {
-        const addr = getAddress(address);
-        invariant(!!addr, 'INVALID:ADDRESS');
-        this._hash = addr;
-    }
+	constructor(address: string) {
+		const addr = getAddress(address);
+		invariant(!!addr, 'INVALID:ADDRESS');
+		this._hash = addr;
+	}
 
-    get hash() {
-        return this._hash.toLowerCase();
-    }
+	get hash() {
+		return this._hash.toLowerCase();
+	}
 
-    // get namehash() {
-    //     return namehash(this.hash);
-    // }
+	// get namehash() {
+	//     return namehash(this.hash);
+	// }
 
-    // get reverse_namehash() {
-    //     return namehash(`${this.hash.substr(2)}.addr.reverse`);
-    // }
+	// get reverse_namehash() {
+	//     return namehash(`${this.hash.substr(2)}.addr.reverse`);
+	// }
 
-    get short() {
-        return Address.shortenAddress(this);
-    }
+	get short() {
+		return Address.shortenAddress(this);
+	}
 
-    public static isAddress(other: string): boolean {
-        try {
-            return !!getAddress(other);
-        } catch (err) {
-            return false;
-        }
-    }
+	public static isAddress(other: string): boolean {
+		try {
+			return !!getAddress(other);
+		} catch (err) {
+			return false;
+		}
+	}
 
-    public equals(other: Address): boolean {
-        invariant(this && other, 'INVALID:ADDRESS');
+	public equals(other: Address): boolean {
+		invariant(this && other, 'INVALID:ADDRESS');
 
-        return this.hash === other.hash;
-    }
+		return this.hash === other.hash;
+	}
 
-    public static shortenAddress(address: Address, chars = 4): string {
-        try {
-            return address.hash ? this.shortenAddressHash(address.hash, chars) : '';
-        } catch (err) {
-            return address.hash ? address.hash : '';
-        }
-    }
+	public static shortenAddress(address: Address, chars = 4): string {
+		try {
+			return address.hash ? this.shortenAddressHash(address.hash, chars) : '';
+		} catch (err) {
+			return address.hash ? address.hash : '';
+		}
+	}
 
-    public static shortenAddressHash(addressHash: string, chars = 4): string {
-        if (!isUndefinedOrNullOrStringEmpty(addressHash) && addressHash.length >= 42) {
-            try {
-                return `${addressHash.substring(0, chars + 2)}...${addressHash.substring(
-                    42 - chars,
-                )}`;
-            } catch (e) {
-                console.log(e);
-                return addressHash;
-            }
-        }
-        return addressHash;
-    }
+	public static shortenAddressHash(addressHash: string, chars = 4): string {
+		if (!isUndefinedOrNullOrStringEmpty(addressHash) && addressHash.length >= 42) {
+			try {
+				return `${addressHash.substring(0, chars + 2)}...${addressHash.substring(
+					42 - chars,
+				)}`;
+			} catch (e) {
+				console.log(e);
+				return addressHash;
+			}
+		}
+		return addressHash;
+	}
 }
 
 // export class EnsAddress extends Address {

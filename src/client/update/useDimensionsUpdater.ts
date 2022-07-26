@@ -3,29 +3,29 @@ import React, { useEffect } from 'react';
 import client from '@src/client';
 
 export default () => {
-    const updateDimensions = client.mutate.updateDimensions();
+	const updateDimensions = client.mutate.updateDimensions();
 
-    const resizer = React.useCallback(() => {
-        updateDimensions({
-            height: window.innerHeight,
-            width: window.innerWidth,
-        });
-    }, [updateDimensions]);
+	const resizer = React.useCallback(() => {
+		updateDimensions({
+			height: window.innerHeight,
+			width: window.innerWidth,
+		});
+	}, [updateDimensions]);
 
-    useEffect(() => {
-        updateDimensions({
-            height: window.innerHeight,
-            width: window.innerWidth,
-        });
-        window.addEventListener('resize', resizer);
-        return () => {
-            window.removeEventListener('resize', resizer);
-        };
-    }, [resizer]);
+	useEffect(() => {
+		updateDimensions({
+			height: window.innerHeight,
+			width: window.innerWidth,
+		});
+		window.addEventListener('resize', resizer);
+		return () => {
+			window.removeEventListener('resize', resizer);
+		};
+	}, [resizer]);
 
-    // console.log({ innerHeight, innerWidth });
+	// console.log({ innerHeight, innerWidth });
 
-    return null;
+	return null;
 };
 
 // export const useVisualViewport = () => {
