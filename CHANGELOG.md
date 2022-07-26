@@ -1,5 +1,11 @@
 # nuggft-interface
 
+## 0.1.1
+
+### Patch Changes
+
+-   fixing react-spring issue
+
 ## 0.1.0
 
 ### Minor Changes
