@@ -56,24 +56,20 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
 		return undefined;
 	}, [populatedTransaction, network]);
 
-	const [tabFadeTransition] = useTransition(
-		page,
-		{
-			from: () => ({
+	const tabFadeTransition = useTransition(page, {
+		from: () => ({
+			opacity: 0,
+		}),
+		expires: 500,
+		enter: { opacity: 1 },
+		leave: () => {
+			return {
 				opacity: 0,
-			}),
-			expires: 500,
-			enter: { opacity: 1 },
-			leave: () => {
-				return {
-					opacity: 0,
-				};
-			},
-			keys: (item) => `tabFadeTransition${item}5`,
-			config: config.stiff,
+			};
 		},
-		[page, isOpen],
-	);
+		keys: (item) => `tabFadeTransition${item}5`,
+		config: config.stiff,
+	});
 
 	const containerStyle = useSpring({
 		to: {

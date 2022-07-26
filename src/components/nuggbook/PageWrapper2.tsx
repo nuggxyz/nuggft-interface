@@ -61,6 +61,7 @@ const useNuggBook = (): {
 			case Page.Start:
 				return { top: 450, comp: Start, page };
 			case Page.Welcome:
+				console.log('HIIIIIIIIII');
 				return { top: 100, comp: Tldr_0, page };
 			case Page.Tldr_1:
 				return {
@@ -214,25 +215,21 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
 	const [handleClear, handleClose, handleVisit] = useNuggBookHandler();
 	const direction = client.nuggbook.useDirection();
 
-	const [tabFadeTransition] = useTransition(
-		book,
-		{
-			initial: {
-				transform: `translate(0px,0px)`,
-			},
-			from: () => ({
-				transform: `translate(${direction ? 1000 : -1000}px,0px)`,
-			}),
-
-			enter: { transform: `translate(0px,0px)` },
-			leave: () => ({
-				transform: `translate(${direction ? -1000 : 1000}px,0px)`,
-			}),
-			keys: (item) => `AtabFadeTransition${item.page}`,
-			config: config.default,
+	const tabFadeTransition = useTransition(book, {
+		initial: {
+			transform: `translate(0px,0px)`,
 		},
-		[book, direction],
-	);
+		from: () => ({
+			transform: `translate(${direction ? 1000 : -1000}px,0px)`,
+		}),
+
+		enter: { transform: `translate(0px,0px)` },
+		leave: () => ({
+			transform: `translate(${direction ? -1000 : 1000}px,0px)`,
+		}),
+		keys: (item) => `AtabFadeTransition${item.page}`,
+		config: config.default,
+	});
 
 	const node = React.useRef<HTMLDivElement>(null);
 

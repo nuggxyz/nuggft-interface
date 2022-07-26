@@ -151,24 +151,20 @@ const PageWrapperDesktop: FunctionComponent<Props> = () => {
 
 	// console.log(yep);
 
-	const [tabFadeTransition] = useTransition(
-		yep,
-		{
-			initial: {
-				transform: `translate(0px,0px)`,
-			},
-			from: () => ({
-				transform: `translate(${!yep.direction ? -1000 : 1000}px,0px)`,
-			}),
-			enter: { pointerEvents: 'auto', transform: `translate(0px,0px)` },
-			leave: () => ({
-				transform: `translate(${yep.direction ? -1000 : 1000}px,0px)`,
-			}),
-			keys: (item) => `AtabFadeTransition${item.book.page}`,
-			config: config.default,
+	const tabFadeTransition = useTransition(yep, {
+		initial: {
+			transform: `translate(0px,0px)`,
 		},
-		[yep, direction],
-	);
+		from: () => ({
+			transform: `translate(${!yep.direction ? -1000 : 1000}px,0px)`,
+		}),
+		enter: { pointerEvents: 'auto', transform: `translate(0px,0px)` },
+		leave: () => ({
+			transform: `translate(${yep.direction ? -1000 : 1000}px,0px)`,
+		}),
+		keys: (item) => `AtabFadeTransition${item.book.page}`,
+		config: config.default,
+	});
 	return (
 		<div
 			style={{

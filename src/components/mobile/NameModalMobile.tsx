@@ -954,24 +954,20 @@ const NameModalMobile = () => {
 		[Home, PickAName, TrippleFinalize],
 	);
 
-	const [tabFadeTransition] = useTransition(
-		stage,
-		{
-			from: () => ({
+	const tabFadeTransition = useTransition(stage, {
+		from: () => ({
+			opacity: 0,
+		}),
+		expires: 500,
+		enter: { opacity: 1 },
+		leave: () => {
+			return {
 				opacity: 0,
-			}),
-			expires: 500,
-			enter: { opacity: 1 },
-			leave: () => {
-				return {
-					opacity: 0,
-				};
-			},
-			keys: (item) => `tabFadeTransition${item}5`,
-			config: config.stiff,
+			};
 		},
-		[stage],
-	);
+		keys: (item) => `tabFadeTransition${item}5`,
+		config: config.stiff,
+	});
 
 	return tabFadeTransition((sty, pager) => {
 		return (
