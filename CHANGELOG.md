@@ -1,5 +1,11 @@
 # nuggft-interface
 
+## 0.1.4
+
+### Patch Changes
+
+-   dep bump
+
 ## 0.1.1
 
 ### Patch Changes
