@@ -5,6 +5,7 @@
     "nuggft-interface": "0.1.4"
   },
   "changesets": [
-    "forty-deers-happen"
+    "forty-deers-happen",
+    "thin-monkeys-greet"
   ]
 }
