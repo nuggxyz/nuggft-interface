@@ -1,5 +1,11 @@
 # nuggft-interface
 
+## 0.1.5-beta.0
+
+### Patch Changes
+
+-   update config
+
 ## 0.1.4
 
 ### Patch Changes

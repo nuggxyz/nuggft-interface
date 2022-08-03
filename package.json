@@ -1,6 +1,6 @@
 {
     "name": "nuggft-interface",
-    "version": "0.1.4",
+    "version": "0.1.5-beta.0",
     "description": "nuggft web facing application",
     "main": "src/index.tsx",
     "author": "nuggxyz",
