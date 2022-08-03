@@ -1,5 +1,11 @@
 # nuggft-interface
 
+## 0.1.5-beta.3
+
+### Patch Changes
+
+-   yarn update
+
 ## 0.1.5-beta.2
 
 ### Patch Changes
