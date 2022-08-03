@@ -1,5 +1,11 @@
 # nuggft-interface
 
+## 0.1.5-beta.2
+
+### Patch Changes
+
+-   dependabot fixes
+
 ## 0.1.5-beta.1
 
 ### Patch Changes
