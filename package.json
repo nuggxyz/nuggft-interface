@@ -5,7 +5,7 @@
     "main": "src/index.tsx",
     "author": "nuggxyz",
     "license": "AGPL-3.0-or-later",
-    "packageManager": "yarn@3.2.1",
+    "packageManager": "yarn@3.2.2",
     "scripts": {
         "test": "ts-node webpack/scripts/test.ts",
         "dev": "yarn start",
