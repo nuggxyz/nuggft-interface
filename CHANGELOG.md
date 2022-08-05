@@ -1,5 +1,11 @@
 # nuggft-interface
 
+## 0.1.5-beta.4
+
+### Patch Changes
+
+-   v bump
+
 ## 0.1.5-beta.3
 
 ### Patch Changes
