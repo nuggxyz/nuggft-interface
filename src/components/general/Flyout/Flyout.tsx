@@ -70,7 +70,7 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
 
 	return (
 		<div
-			style={{ cursor: 'pointer', ...containerStyle }}
+			style={{ cursor: 'pointer', ...containerStyle, zIndex: 1100 }}
 			ref={closeRef}
 			aria-hidden="true"
 			onClick={(event) => {

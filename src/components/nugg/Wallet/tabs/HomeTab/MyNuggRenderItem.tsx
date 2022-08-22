@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { IoEllipsisHorizontal, IoSearch } from 'react-icons/io5';
+import { IoSearch } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -7,10 +7,10 @@ import globalStyles from '@src/lib/globalStyles';
 import Text from '@src/components/general/Texts/Text/Text';
 import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
-import Flyout from '@src/components/general/Flyout/Flyout';
-import LoanButtons from '@src/components/nugg/ViewingNugg/ActionButtons/LoanButtons';
-import OwnerButtons from '@src/components/nugg/ViewingNugg/ActionButtons/OwnerButtons';
-import SaleButtons from '@src/components/nugg/ViewingNugg/ActionButtons/SaleButtons';
+// import Flyout from '@src/components/general/Flyout/Flyout';
+// import LoanButtons from '@src/components/nugg/ViewingNugg/ActionButtons/LoanButtons';
+// import OwnerButtons from '@src/components/nugg/ViewingNugg/ActionButtons/OwnerButtons';
+// import SaleButtons from '@src/components/nugg/ViewingNugg/ActionButtons/SaleButtons';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
 import { MyNugg } from '@src/client/user';
@@ -45,7 +45,7 @@ const MyNuggRenderItem: FunctionComponent<GodListRenderItemProps<MyNugg, undefin
 						{item.recent ? t`New` : item.activeLoan ? t`Loaned` : t`On sale`}
 					</Text>
 				) : null}
-				<Flyout
+				{/* <Flyout
 					containerStyle={styles.flyout}
 					style={{ right: '0rem', top: '2rem' }}
 					button={
@@ -63,7 +63,7 @@ const MyNuggRenderItem: FunctionComponent<GodListRenderItemProps<MyNugg, undefin
 						) : (
 							<OwnerButtons tokenId={item.tokenId} />
 						))}
-				</Flyout>
+				</Flyout> */}
 				<Button
 					key={JSON.stringify(item)}
 					onClick={() => {

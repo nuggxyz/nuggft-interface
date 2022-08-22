@@ -43,6 +43,7 @@ const LoanInputModal = ({ data: { tokenId, actionType } }: { data: LoanInputModa
 		if (tokenId && chainId && provider) {
 			if (actionType === 'liquidate') {
 				return nuggft.vfl([tokenId.toRawId()]).then((v) => {
+					console.log({ v });
 					return v;
 				});
 			}
@@ -71,7 +72,7 @@ const LoanInputModal = ({ data: { tokenId, actionType } }: { data: LoanInputModa
 		<div style={styles.container}>
 			<Text textStyle={{ color: lib.colors.textColor, marginBottom: '.3rem' }}>{`${
 				actionType === 'liquidate' ? t`Payoff` : t`Extend`
-			} Nugg ${tokenId.toRawId()}'s loan`}</Text>
+			} ${tokenId.toPrettyId()}'s loan`}</Text>
 			<AnimatedCard>
 				<TokenViewer tokenId={tokenId} labelColor="white" showcase />
 			</AnimatedCard>

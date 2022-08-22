@@ -12,6 +12,7 @@ import Flyout from '@src/components/general/Flyout/Flyout';
 import { IoEllipsisVertical } from 'react-icons/io5';
 import lib from '@src/lib';
 import useDimensions from '@src/client/hooks/useDimensions';
+// import MultiLiquidateButton from './MultiLiquidateButton';
 
 type Props = Record<string, never>;
 
@@ -22,7 +23,7 @@ const Buttons = () => {
 			openOnHover={screen === 'desktop'}
 			float="right"
 			containerStyle={{ position: 'relative' }}
-			style={{ right: '0px', width: '130px' }}
+			style={{ right: '0px', width: '135px' }}
 			top={30}
 			button={
 				<div
@@ -36,8 +37,9 @@ const Buttons = () => {
 				</div>
 			}
 		>
-			<MultiRebalanceButton />
 			<MultiLoanButton />
+			<MultiRebalanceButton />
+			{/* <MultiLiquidateButton /> */}
 		</Flyout>
 	);
 };

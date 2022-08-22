@@ -14,11 +14,10 @@ import {
 import styles from './LoanTab.styles';
 import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import { useMemoizedAsyncState } from '@src/hooks/useAsyncState';
-import { BigNumber } from '@ethersproject/bignumber';
 
 type Props = Record<string, never>;
 
-const MultiRebalanceButton: FunctionComponent<Props> = () => {
+const MultiLiquidateButton: FunctionComponent<Props> = () => {
 	const address = web3.hook.usePriorityAccount();
 	const provider = web3.hook.usePriorityProvider();
 	const nuggft = useNuggftV1(provider);
@@ -40,7 +39,7 @@ const MultiRebalanceButton: FunctionComponent<Props> = () => {
 
 	const amount = useMemoizedAsyncState(() => {
 		if (!isUndefinedOrNullOrArrayEmpty(loanedNuggs)) {
-			return nuggft.vfr(loanedNuggs);
+			return nuggft.vfl(loanedNuggs).then((x) => x.map((v) => v.mul(2)));
 		}
 		return undefined;
 	}, [loanedNuggs, nuggft]);
@@ -51,14 +50,18 @@ const MultiRebalanceButton: FunctionComponent<Props> = () => {
 			feedbackText="Check Wallet..."
 			buttonStyle={styles.multiLoanButton}
 			textStyle={styles.multiLoanButtonText}
-			label={t`Extend all`}
+			label={t`Pay off all`}
 			onClick={() => {
 				if (address && chainId && provider && amount) {
-					void send(
-						nuggft.populateTransaction.rebalance(loanedNuggs, {
-							value: amount.reduce((acc, val) => acc.add(val), BigNumber.from(0)),
-						}),
+					const liquidates = loanedNuggs.map((nugg, index) =>
+						nuggft.populateTransaction.liquidate(nugg, { value: amount[index] }),
 					);
+					const multi = async () => {
+						return nuggft.populateTransaction.multicall(
+							(await Promise.all(liquidates)).map((tx) => tx.data || '0x0'),
+						);
+					};
+					void send(multi());
 				}
 			}}
 			rightIcon={
@@ -68,4 +71,4 @@ const MultiRebalanceButton: FunctionComponent<Props> = () => {
 	) : null;
 };
 
-export default MultiRebalanceButton;
+export default MultiLiquidateButton;

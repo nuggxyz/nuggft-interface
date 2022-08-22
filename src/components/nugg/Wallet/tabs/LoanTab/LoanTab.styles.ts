@@ -18,7 +18,7 @@ const styles = lib.layout.NLStyleSheetCreator({
 		background: lib.colors.white,
 		borderRadius: 0,
 		margin: '0rem',
-		padding: '.4rem .6rem',
+		padding: '.5rem .8rem',
 		display: 'flex',
 		justifyContent: 'space-between',
 	},
