@@ -1,4 +1,4 @@
-import React, { CSSProperties, FunctionComponent, useEffect, useMemo, useState } from 'react';
+import React, { CSSProperties, FunctionComponent, useLayoutEffect, useMemo, useState } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 
 import lib, {
@@ -43,13 +43,18 @@ const CircleTimer: FunctionComponent<Props> = ({
 
 	const [stateRemaining, setStateRemaining] = useState(duration);
 
-	useEffect(() => {
-		setStateRemaining(!isUndefinedOrNullOrStringEmpty(staticColor) ? duration : remaining);
+	useLayoutEffect(() => {
+		setStateRemaining(
+			!isUndefinedOrNullOrStringEmpty(staticColor) || duration < remaining
+				? duration
+				: remaining,
+		);
 	}, [remaining, duration, staticColor]);
 
 	const to = useMemo(() => {
 		return !isUndefinedOrNullOrNotNumber(stateRemaining) &&
-			!isUndefinedOrNullOrNumberZero(duration)
+			!isUndefinedOrNullOrNumberZero(duration) &&
+			stateRemaining <= duration
 			? Math.abs(timerCircleRadius * (TWOPI - (stateRemaining / duration) * TWOPI) + HALFPI)
 			: 0;
 	}, [stateRemaining, duration, timerCircleRadius]);
