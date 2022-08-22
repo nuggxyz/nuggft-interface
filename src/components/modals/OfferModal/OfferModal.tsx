@@ -1016,7 +1016,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 							closeModal();
 							// setShowNotice(false);
 						}}
-						label={t`nah`}
+						label={t`Nah`}
 						buttonStyle={{
 							...styles.button,
 							background: lib.colors.white,
@@ -1024,16 +1024,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 							width: '40%',
 						}}
 					/>
-					<FeedbackButton
-						overrideFeedback
-						disabled={
-							calculating ||
-							!!estimateError ||
-							(!selectedNuggForItem && data.isItem())
-						}
-						feedbackText={t`Check Wallet...`}
+					<Button
 						buttonStyle={{ ...styles.button, width: '40%' }}
-						label={t`i got it`}
+						label={t`I got it`}
 						onClick={() => {
 							setViewing(2);
 							setShowNotice(false);
@@ -1041,15 +1034,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 							// 	void send(populatedTransaction.tx);
 							// }
 						}}
-						rightIcon={
-							calculating
-								? ((
-										<div style={{ position: 'absolute', right: '.7rem' }}>
-											<Loader color="white" />
-										</div>
-								  ) as JSX.Element)
-								: undefined
-						}
 					/>
 				</div>
 			</div>

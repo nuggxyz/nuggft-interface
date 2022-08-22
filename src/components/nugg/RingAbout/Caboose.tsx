@@ -15,6 +15,7 @@ import web3 from '@src/web3';
 import Text from '@src/components/general/Texts/Text/Text';
 
 import styles from './RingAbout.styles';
+import useLifecycle from '@src/client/hooks/useLifecycle';
 
 const TryoutRenderItem: FC<GodListRenderItemProps<TryoutData, undefined, TryoutData>> = ({
 	item: tryoutData,
@@ -70,8 +71,13 @@ export default ({
 	const address = web3.hook.usePriorityAccount();
 	const [nuggToBuyFrom, setNuggToBuyFrom] = React.useState<TryoutData>();
 	const openModal = client.modal.useOpenModal();
+	const lifecycle = useLifecycle(tokenId);
 
-	return token && token.isItem() && token.tryout.count > 0 && !token.activeSwap ? (
+	return token &&
+		token.isItem() &&
+		token.tryout.count > 0 &&
+		!token.activeSwap &&
+		(lifecycle === 'tryout' || lifecycle === 'formality') ? (
 		<div style={{ width: '100%' }}>
 			<GodListHorizontal
 				data={token.tryout.swaps}
