@@ -8,7 +8,7 @@ const styles = lib.layout.NLStyleSheetCreator({
 		padding: '.1rem .4rem ',
 		position: 'absolute',
 		top: '-.3rem',
-		right: '-.3rem',
+		right: '.3rem',
 	},
 	container: {
 		width: '100%',
