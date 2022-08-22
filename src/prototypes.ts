@@ -225,7 +225,7 @@ Array.prototype.filterInPlace = function fn(callbackfn, thisArg) {
 	this.length = ptr;
 };
 
-Array.prototype.first = function fn(count: number) {
+Array.prototype.first = function fn(count?: number) {
 	if (!this || this.length === 0) {
 		return undefined;
 	}

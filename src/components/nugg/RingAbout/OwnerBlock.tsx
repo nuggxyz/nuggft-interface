@@ -45,7 +45,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
 	const MemoizedTimer = React.useMemo(() => {
 		return swap && !swap.isPotential && swap?.endingEpoch ? (
 			<div>
-				<Timer seconds={seconds ?? 0} />
+				<Timer seconds={seconds ?? 0} resetOn={swap} />
 			</div>
 		) : null;
 	}, [swap, seconds]);

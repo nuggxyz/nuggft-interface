@@ -2,7 +2,7 @@ import React from 'react';
 import { t } from '@lingui/macro';
 
 import Button from '@src/components/general/Buttons/Button/Button';
-import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import lib, { isUndefinedOrNull, isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
 import useLifecycle from '@src/client/hooks/useLifecycle';
@@ -11,6 +11,7 @@ import { buildTokenIdFactory } from '@src/prototypes';
 import { Lifecycle } from '@src/client/interfaces';
 
 import styles from './RingAbout.styles';
+import { useNavigate } from 'react-router';
 
 export default ({
 	tokenId,
@@ -28,18 +29,21 @@ export default ({
 
 	const openModal = client.modal.useOpenModal();
 
-	const isDisabled = React.useMemo(() => {
+	const isOver = React.useMemo(() => {
 		return (
-			!isUndefinedOrNullOrStringEmpty(address) &&
-			!(
-				lifecycle &&
-				lifecycle !== 'shower' &&
-				lifecycle !== 'stands' &&
-				lifecycle !== 'cut' &&
-				lifecycle !== 'tryout'
-			)
+			(!isUndefinedOrNullOrStringEmpty(address) &&
+				!(
+					lifecycle &&
+					lifecycle !== 'shower' &&
+					lifecycle !== 'stands' &&
+					lifecycle !== 'cut' &&
+					lifecycle !== 'tryout'
+				)) ||
+			isUndefinedOrNull(token?.activeSwap)
 		);
 	}, [token, lifecycle, address]);
+
+	const navigate = useNavigate();
 
 	return lifecycle !== 'tryout' && lifecycle !== 'formality' ? (
 		<Button
@@ -53,13 +57,15 @@ export default ({
 			textStyle={{
 				...styles.buttonText,
 			}}
-			disabled={isDisabled}
+			// disabled={isOver}
 			onClick={() => {
 				if (isUndefinedOrNullOrStringEmpty(address)) {
 					openModal({
 						modalType: ModalEnum.Wallet,
 						containerStyle: { background: lib.colors.transparentWhite },
 					});
+				} else if (isOver) {
+					navigate('/');
 				} else if (token && token.isNugg()) {
 					openModal(
 						buildTokenIdFactory({
@@ -89,8 +95,8 @@ export default ({
 					? t`Connect wallet`
 					: !token
 					? 'Loading...'
-					: isDisabled
-					? 'swap is over'
+					: isOver
+					? 'Go to current auction'
 					: lifecycle === Lifecycle.Bench
 					? 'Accept and Start Auction'
 					: t`Place offer`

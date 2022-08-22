@@ -33,13 +33,14 @@ import PeerButtonMobile from './PeerButtonMobile';
 
 const incrementers = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 75, 99] as const;
 
-const Butter = ({
+export const Butter = ({
 	currIncrement,
 	toggled,
 	increment,
 	endingEpoch,
 	onClick,
 	hasNoBids,
+	tint,
 }: {
 	currIncrement: bigint;
 	increment: bigint;
@@ -47,6 +48,7 @@ const Butter = ({
 	toggled: boolean;
 	hasNoBids: boolean;
 	onClick: (increment: bigint) => void;
+	tint?: string;
 }) => {
 	const blocknum = client.block.useBlock();
 
@@ -61,8 +63,6 @@ const Butter = ({
 		}
 		return [1, 1];
 	}, [blocknum, endingEpoch, activated, hasNoBids]);
-
-	console.log([secsTillNextInterval, intervalLastsForSecs]);
 
 	return (
 		<div
@@ -85,6 +85,7 @@ const Butter = ({
 				toggled={toggled}
 				isStatic={!activated}
 				strokeWidth={4}
+				primaryColor={tint || lib.colors.primaryColor}
 				style={{
 					pointerEvents: 'none',
 					position: 'relative',
@@ -98,10 +99,10 @@ const Butter = ({
 			>
 				<Text
 					textStyle={{
-						color: toggled ? lib.colors.primaryColor : lib.colors.white,
+						color: toggled ? tint || lib.colors.primaryColor : lib.colors.white,
 						padding: '5px',
 						fontWeight: lib.layout.fontWeight.semibold,
-						marginTop: -4,
+						// marginTop: -4,
 						fontSize: 17,
 					}}
 				>
@@ -414,14 +415,14 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 						one sec
 					</Text>
 					<Text size="medium" textStyle={{ marginTop: 10 }}>
-						<b>{data.nuggToBuyFrom.toPrettyId()}</b>{' '}
+						<b>{data.nuggToBuyFrom!.toPrettyId()}</b>{' '}
 						{t`has never been bid on, they must be bid on before they can sell`}{' '}
 						<b>{data.tokenId.toPrettyId()}</b>
 					</Text>
 
 					<Text size="medium" textStyle={{ marginTop: 10 }}>
 						{t`if you move forward, your transaction will include both a minimum bid on`}{' '}
-						<b>{data.nuggToBuyFrom.toPrettyId()}</b>
+						<b>{data.nuggToBuyFrom!.toPrettyId()}</b>
 						{t`, and your desired bid for`} <b>{data.tokenId.toPrettyId()}</b>
 					</Text>
 

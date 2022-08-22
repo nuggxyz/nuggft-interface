@@ -85,23 +85,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
 	}, [width, activated, toggled, primaryColor, secondaryColor, strokeWidth]);
 
 	return (
-		<div style={{ zIndex: 1, ...style }}>
-			<div
-				id="nugg-holder"
-				style={{
-					position: 'absolute',
-					alignItems: 'center',
-					display: 'flex',
-					justifyContent: 'center',
-					overflow: 'visible',
-					flexDirection: 'column',
-					transformOrigin: 'center',
-					zIndex: 101,
-					...childrenContainerStyle,
-				}}
-			>
-				{children}
-			</div>
+		<div style={{ ...style }}>
 			<div
 				style={{
 					filter: `drop-shadow(2px 3px 2px rgb(0 0 0 / 0.2)) hue-rotate(0)`,
@@ -134,6 +118,22 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
 						style={_style}
 					/>
 				</svg>
+			</div>
+			<div
+				id="nugg-holder"
+				style={{
+					position: 'absolute',
+					alignItems: 'center',
+					display: 'flex',
+					justifyContent: 'center',
+					overflow: 'visible',
+					flexDirection: 'column',
+					transformOrigin: 'center',
+					// zIndex: 101,
+					...childrenContainerStyle,
+				}}
+			>
+				{children}
 			</div>
 		</div>
 	);

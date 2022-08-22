@@ -388,7 +388,7 @@ const useStore = create(
 					if (data.isItem()) {
 						if (nower) {
 							if (nower.isNugg()) return;
-							if (data.sellingTokenId !== nower.owner) {
+							if (data.sellingTokenId && data.sellingTokenId !== nower.owner) {
 								return;
 							}
 						}

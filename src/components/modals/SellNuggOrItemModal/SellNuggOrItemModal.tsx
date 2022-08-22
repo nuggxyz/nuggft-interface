@@ -100,7 +100,7 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
 
 	const populatedTransaction = useMemo(() => {
 		if (swap && address) {
-			if (data.isItem()) {
+			if (data.isItem() && data.sellingNuggId) {
 				return {
 					tx: nuggft.populateTransaction.claim(
 						[data.sellingNuggId.toRawId()],
@@ -119,7 +119,7 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
 		const value = amountUsd.eth.bignumber;
 
 		if (!value.isZero()) {
-			if (data.isItem()) {
+			if (data.isItem() && data.sellingNuggId) {
 				const sell = nuggft.populateTransaction['sell(uint24,uint16,uint96)'](
 					data.sellingNuggId.toRawId(),
 					data.tokenId.toRawId(),

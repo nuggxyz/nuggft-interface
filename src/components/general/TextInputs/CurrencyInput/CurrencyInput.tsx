@@ -75,7 +75,7 @@ export const DualCurrencyInput: FunctionComponent<DualProps> = ({
 		[value, setInnerValue, truePrice.usd],
 	);
 
-	React.useEffect(() => {
+	React.useLayoutEffect(() => {
 		if (localValue !== value || prevCurrencyRef === null || currencyPref !== prevCurrencyRef)
 			callback(currencyPref);
 	}, [currencyPref, callback, prevCurrencyRef, value, localValue]);

@@ -262,8 +262,10 @@ interface Array<T> {
 		sort?: (a: T, b: T) => number,
 	);
 	toLowerCase(): Lowercase<T>[];
-	first(count?: number): Array<T>;
-	last(count?: number): Array<T>;
+	first(count: number): Array<T>;
+	first(): T;
+	last(count: number): Array<T>;
+	last(): T;
 	insert<U extends { index: number }>(element: U): Array<U>;
 	toggle<U>(element: U, field?: keyof U);
 	remove<U extends { index: number }>(element: U): Array<U>;

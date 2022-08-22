@@ -7,6 +7,7 @@ import { Lifecycle } from '@src/client/interfaces';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 
 import styles from './RingAbout.styles';
+import { isUndefinedOrNull } from '@src/lib';
 
 const OfferText = ({ tokenId, textStyle }: { tokenId?: TokenId; textStyle?: CSSProperties }) => {
 	const token = client.token.useToken(tokenId);
@@ -36,6 +37,9 @@ const OfferText = ({ tokenId, textStyle }: { tokenId?: TokenId; textStyle?: CSSP
 		}
 		if (lifecycle === Lifecycle.Shower) {
 			return hasBids ? t`Winner` : t`This sale is over`;
+		}
+		if (isUndefinedOrNull(token.activeSwap)) {
+			return t`This sale is over`;
 		}
 		return '';
 	}, [token, hasBids, lifecycle]);

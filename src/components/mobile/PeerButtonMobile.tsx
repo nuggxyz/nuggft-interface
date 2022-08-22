@@ -35,6 +35,8 @@ const PeerButtonMobile = React.memo<{
 	fee?: PairInt;
 	icon?: string;
 	header?: string;
+	style?: CSSProperties;
+	className?: string;
 }>(
 	({
 		text,
@@ -47,18 +49,20 @@ const PeerButtonMobile = React.memo<{
 		done,
 		icon,
 		header,
+		style,
+		className,
 	}) => {
 		const priorityPeer = web3.hook.usePriorityPeer();
 
 		return (
 			<div
-				className="mobile-pressable-div"
+				className={className || 'mobile-pressable-div'}
 				style={{
 					background: color,
 					color: 'white',
 					borderRadius: lib.layout.borderRadius.largish,
 					boxShadow: lib.layout.boxShadow.dark,
-					width: 'auto',
+					// width: 'auto',
 					display: 'flex',
 					padding: 10,
 					alignItems: 'center',
@@ -67,6 +71,7 @@ const PeerButtonMobile = React.memo<{
 						cursor: 'not-allowed',
 					}),
 					position: 'relative',
+					...style,
 				}}
 				onClick={onClick}
 				aria-hidden="true"
