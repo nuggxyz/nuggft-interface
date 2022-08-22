@@ -73,7 +73,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
 			setSortAsc((_sort) => {
 				return {
 					..._sort,
-					...(target && sort ? { [target]: sort === 'asc' } : {}),
+					...(target && sort ? { [target]: sort.direction === 'asc' } : {}),
 				};
 			});
 		}
@@ -98,10 +98,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
 			all.reduce((acc: TokenId[], curr) => {
 				let tmp: TokenId[] = acc;
 				if (
-					(epoch &&
-						+curr.toRawId() <= +epoch &&
-						curr.isNuggId() &&
-						liveActiveToggle[0].includes('nuggs')) ||
+					(curr.isNuggId() && liveActiveToggle[0].includes('nuggs')) ||
 					(curr.isItemId() && liveActiveToggle[0].includes('items'))
 				) {
 					if (sortAsc[SearchView.OnSale]) {
