@@ -359,7 +359,10 @@ const useUnclaimedOffersFilteredByEpoch = () => {
 		(state) =>
 			state.unclaimedOffers
 				.flat()
-				.filter((x) => x.endingEpoch !== null && _epoch && x.endingEpoch < _epoch)
+				.filter(
+					(x) =>
+						x.endingEpoch !== null && _epoch && x.endingEpoch < _epoch && !x.isNugg(),
+				)
 				.sort((a, b) => ((a.endingEpoch ?? 0) > (b.endingEpoch ?? 0) ? -1 : 1)),
 		shallow,
 	);

@@ -16,9 +16,11 @@ const styles = lib.layout.NLStyleSheetCreator({
 	},
 	multiLoanButton: {
 		background: lib.colors.white,
-		borderRadius: lib.layout.borderRadius.large,
+		borderRadius: 0,
 		margin: '0rem',
-		padding: '.2rem .6rem',
+		padding: '.4rem .6rem',
+		display: 'flex',
+		justifyContent: 'space-between',
 	},
 	multiLoanButtonText: {
 		color: lib.colors.nuggRedText,
@@ -41,7 +43,7 @@ const styles = lib.layout.NLStyleSheetCreator({
 		margin: '.25rem 0rem',
 	},
 	renderItemNugg: {
-		width: '60px',
+		width: '50px',
 		height: '50px',
 	},
 	textBlue: {

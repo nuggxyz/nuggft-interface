@@ -128,7 +128,11 @@ const List = <T, B, A>({
 					}}
 				>
 					{!loading && (
-						<Text weight="light" size="small" type="text" textStyle={listEmptyStyle}>
+						<Text
+							size="small"
+							type="text"
+							textStyle={{ textAlign: 'center', ...listEmptyStyle }}
+						>
 							{listEmptyText || t`No items to display...`}
 						</Text>
 					)}

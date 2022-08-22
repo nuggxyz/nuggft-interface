@@ -24,7 +24,7 @@ const LoanRenderItem: FunctionComponent<
 				<TokenViewer tokenId={item.nugg} style={styles.renderItemNugg} />
 				<div style={{ textAlign: 'left', marginLeft: '.5rem' }}>
 					<Text textStyle={styles.textBlue} size="small">
-						Nugg {item.nugg.toRawId()}
+						{item.nugg.toPrettyId()}
 					</Text>
 					<Text type="text" textStyle={styles.textDefault} size="smaller">
 						{epochId && `${+item.endingEpoch - +epochId} epochs remaining`}

@@ -41,7 +41,7 @@ const styles = lib.layout.NLStyleSheetCreator({
 		margin: '.25rem 0rem',
 	},
 	renderItemETH: {
-		width: '60px',
+		width: '50px',
 		height: '30px',
 		margin: '.6rem 0rem',
 	},
@@ -51,6 +51,7 @@ const styles = lib.layout.NLStyleSheetCreator({
 	},
 	textDefault: {
 		color: lib.colors.textColor,
+		textAlign: 'left',
 	},
 	textWhite: {
 		color: lib.colors.white,

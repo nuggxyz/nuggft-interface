@@ -31,7 +31,7 @@ const ClaimRenderItem: FunctionComponent<
 	const swapText = useMemo(
 		() =>
 			item.tokenId.isItemId()
-				? t`For Nugg ${item.nugg}`
+				? t`For ${item.nugg?.toPrettyId()}`
 				: t`From epoch ${item.endingEpoch !== null ? item.endingEpoch : ''}`,
 		[item],
 	);
@@ -48,6 +48,7 @@ const ClaimRenderItem: FunctionComponent<
 					style={{
 						display: 'flex',
 						alignItems: 'flex-start',
+						justifyContent: 'flex-start',
 						flexDirection: 'column',
 						marginLeft: '.5rem',
 					}}

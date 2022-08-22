@@ -4,6 +4,7 @@ import { t } from '@lingui/macro';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import web3 from '@src/web3';
 import client from '@src/client';
+import Text from '@src/components/general/Texts/Text/Text';
 import {
 	useNuggftV1,
 	usePrioritySendTransaction,
@@ -29,21 +30,24 @@ const MultiLoanButton: FunctionComponent<Props> = () => {
 	const { tokenIds } = useMemo(() => {
 		const _tokenIds: string[] = [];
 		unclaimedOffers.forEach((x) => {
-			if (!x.activeLoan && !x.activeSwap && !x.pendingClaim) _tokenIds.push(x.tokenId);
+			if (!x.activeLoan && !x.activeSwap && !x.pendingClaim)
+				_tokenIds.push(x.tokenId.toRawId());
 		});
 		return { tokenIds: _tokenIds };
 	}, [unclaimedOffers]);
 
 	return unclaimedOffers?.length > 0 ? (
 		<FeedbackButton
+			disabled={tokenIds.length === 0}
 			feedbackText="Check Wallet..."
 			buttonStyle={styles.multiLoanButton}
 			textStyle={styles.multiLoanButtonText}
-			label={t`Loan all (${tokenIds.length})`}
+			label={t`Loan all`}
 			onClick={() => {
 				if (address && chainId && provider)
 					void send(nuggft.populateTransaction.loan(tokenIds));
 			}}
+			rightIcon={<Text textStyle={styles.multiLoanButtonText}>{`(${tokenIds.length})`}</Text>}
 		/>
 	) : null;
 };

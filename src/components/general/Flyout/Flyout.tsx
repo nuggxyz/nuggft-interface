@@ -36,8 +36,13 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
 	});
 
 	const [closeRef, closeHover] = useOnHover(() => {
-		if (openOnHover) setOpen(openHover || closeHover);
-		else if (open && !closeHover) setOpen(false);
+		if (openOnHover) {
+			if (open && !closeHover) {
+				setOpen(false);
+			} else {
+				setOpen(openHover || closeHover);
+			}
+		}
 	});
 	// const [ screen ] = useDimensions();
 	// const dimentions = client.live.dimentions();
@@ -68,11 +73,19 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
 			style={{ cursor: 'pointer', ...containerStyle }}
 			ref={closeRef}
 			aria-hidden="true"
-			onClick={() => {
+			onClick={(event) => {
+				event.stopPropagation();
 				setOpen(!open);
 			}}
 		>
-			<div aria-hidden="true" role="button" onClick={() => setOpen(!open)}>
+			<div
+				aria-hidden="true"
+				role="button"
+				onClick={(event) => {
+					event.stopPropagation();
+					setOpen(!open);
+				}}
+			>
 				{button}
 			</div>
 			{transition((animatedStyle, isOpen) =>
@@ -85,7 +98,7 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
 								height: '100px',
 								position: 'absolute' as const,
 								top: 0,
-								marginTop: top,
+								paddingTop: top,
 								[float]: 0,
 							}}
 						>

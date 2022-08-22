@@ -29,7 +29,7 @@ const ClaimTab: FunctionComponent<Props> = () => {
 				loaderColor="white"
 				style={styles.list}
 				extraData={{ sender, chainId, provider }}
-				listEmptyText={t`No Nuggs or ETH to claim...`}
+				listEmptyText={t`This is where you will be able to claim items you've won or reclaim ETH from auctions that you lost`}
 				// itemHeight={75.1875}
 			/>
 		</div>

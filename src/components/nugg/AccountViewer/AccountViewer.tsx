@@ -17,6 +17,7 @@ import client from '@src/client';
 import { ModalEnum } from '@src/interfaces/modals';
 
 import styles from './AccountViewer.styles';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 const AccountViewer = () => {
 	const chainId = web3.hook.usePriorityChainId();
@@ -27,6 +28,7 @@ const AccountViewer = () => {
 	const peer = web3.hook.usePriorityPeer();
 	const connector = web3.hook.usePriorityConnector();
 	const openModal = client.modal.useOpenModal();
+	const [screen] = useDimensions();
 
 	const currencyPref = client.usd.useCurrencyPreferrence();
 	const setCurrencyPref = client.usd.useSetCurrencyPreferrence();
@@ -61,6 +63,7 @@ const AccountViewer = () => {
 		<Flyout
 			style={styles.flyout}
 			triggerWidth="175px"
+			openOnHover={screen === 'desktop'}
 			top={15}
 			button={
 				<div style={styles.textContainer}>
