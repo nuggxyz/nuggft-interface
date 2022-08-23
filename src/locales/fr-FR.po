@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-07-24 15:03+0000\n"
+"POT-Creation-Date: 2022-08-22 19:25+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: French\n"
-"PO-Revision-Date: 2022-07-25 06:05\n"
+"PO-Revision-Date: 2022-08-23 06:12\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
@@ -127,16 +127,11 @@ msgstr "Annulé par"
 msgid "Chances"
 msgstr ""
 
-#: src/components/modals/OfferModal/OfferModal.tsx
-msgid "Change offer for"
-msgstr "Changer le taux de l'offre"
-
 #: src/components/modals/LoanInputModal/LoanInputModal.tsx
 #: src/pages/hot-rotate-o/HotRotateO.tsx
 msgid "Check Wallet"
 msgstr "Vérifier Wallet"
 
-#: src/components/modals/OfferModal/OfferModal.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
 #: src/components/modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimRenderItem.tsx
@@ -162,9 +157,9 @@ msgstr "Tout Réclamer"
 msgid "Claims"
 msgstr "Réclamer"
 
-#: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
-msgid "Coming Up"
-msgstr "À venir"
+#: src/components/modals/OfferModal/OfferModal.tsx
+msgid "Click to look on etherscan"
+msgstr ""
 
 #: src/components/nugg/RingAbout/Caboose.tsx
 #: src/components/nugg/RingAbout/OfferButton.tsx
@@ -227,13 +222,17 @@ msgstr "Explorer"
 msgid "Extend"
 msgstr "Prolonger"
 
+#: src/components/nugg/Wallet/tabs/LoanTab/MultiRebalanceButton.tsx
+msgid "Extend all"
+msgstr ""
+
 #: src/components/nugg/FloorPrice.tsx
 msgid "FLOOR"
 msgstr "PRIX DE DÉPART"
 
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimRenderItem.tsx
-msgid "For Nugg {0}"
-msgstr "Pour le Nugg {0}"
+msgid "For {0}"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimRenderItem.tsx
 msgid "From epoch {0}"
@@ -264,6 +263,10 @@ msgstr ""
 #: src/components/nugg/Wallet/Wallet.tsx
 msgid "Home"
 msgstr "Accueil"
+
+#: src/components/modals/OfferModal/OfferModal.tsx
+msgid "I got it"
+msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_10.tsx
 msgid "I'm still confused! 😬"
@@ -301,8 +304,8 @@ msgid "Loan"
 msgstr "Emprunt"
 
 #: src/components/nugg/Wallet/tabs/LoanTab/MultiLoanButton.tsx
-msgid "Loan all ({0})"
-msgstr "Tout mettre en gage ({0})"
+msgid "Loan all"
+msgstr ""
 
 #: src/components/nugg/ViewingNugg/ActionButtons/LoanButtons.tsx
 #: src/components/nugg/Wallet/tabs/HomeTab/MyNuggRenderItem.tsx
@@ -348,6 +351,10 @@ msgstr ""
 msgid "My Nuggs"
 msgstr ""
 
+#: src/components/modals/OfferModal/OfferModal.tsx
+msgid "Nah"
+msgstr ""
+
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_6.tsx
 msgid "Naturally, as periods pass by and auctions end, the pool will increase in value and so each share will always increase in value as well"
 msgstr ""
@@ -355,10 +362,6 @@ msgstr ""
 #: src/components/nugg/Wallet/tabs/HomeTab/MyNuggRenderItem.tsx
 msgid "New"
 msgstr ""
-
-#: src/components/nugg/Wallet/tabs/ClaimTab/ClaimTab.tsx
-msgid "No Nuggs or ETH to claim..."
-msgstr "Aucun Nuggs ou ETH à réclamer..."
 
 #: src/components/general/List/List.tsx
 #: src/components/general/List/StickyList.tsx
@@ -390,6 +393,10 @@ msgstr ""
 msgid "Offer on"
 msgstr ""
 
+#: src/components/modals/OfferModal/OfferModal.tsx
+msgid "Ok, I confirmed it"
+msgstr ""
+
 #: src/client/formatters/formatSearchFilter.ts
 msgid "On Sale"
 msgstr ""
@@ -402,7 +409,6 @@ msgstr ""
 msgid "On sale by"
 msgstr ""
 
-#: src/components/modals/OfferModal/OfferModal.tsx
 #: src/components/nugg/RingAbout/Caboose.tsx
 msgid "On sale by {0}"
 msgstr ""
@@ -429,6 +435,10 @@ msgstr ""
 msgid "Pay off"
 msgstr ""
 
+#: src/components/nugg/Wallet/tabs/LoanTab/MultiLiquidateButton.tsx
+msgid "Pay off all"
+msgstr ""
+
 #: src/components/modals/LoanInputModal/LoanInputModal.tsx
 #: src/components/modals/LoanInputModal/LoanInputModal.tsx
 msgid "Payoff"
@@ -442,11 +452,6 @@ msgstr ""
 msgid "Pending Transaction"
 msgstr ""
 
-#: src/components/modals/OfferModal/OfferModal.tsx
-msgid "Pick one of your nuggs to offer on this item"
-msgstr ""
-
-#: src/components/modals/OfferModal/OfferModal.tsx
 #: src/components/nugg/RingAbout/Caboose.tsx
 #: src/components/nugg/RingAbout/OfferButton.tsx
 msgid "Place offer"
@@ -473,10 +478,6 @@ msgstr ""
 msgid "Purchases"
 msgstr ""
 
-#: src/components/nugg/Wallet/tabs/LoanTab/MultiRebalanceButton.tsx
-msgid "Rebalance all ({0})"
-msgstr ""
-
 #: src/components/nugg/ViewingNugg/ActionButtons/SaleButtons.tsx
 msgid "Reclaim"
 msgstr ""
@@ -490,6 +491,8 @@ msgid "Reset"
 msgstr ""
 
 #: src/components/mobile/SellModalMobile.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "Review"
 msgstr ""
 
@@ -542,6 +545,10 @@ msgstr "Un problème est survenu"
 msgid "Start by buying items that interest you, and then have fun mixing and matching"
 msgstr ""
 
+#: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
+msgid "Starting in about {minutes} minutes"
+msgstr ""
+
 #: src/components/nugg/Wallet/Wallet.tsx
 msgid "Swap"
 msgstr "Enchère"
@@ -590,12 +597,25 @@ msgstr ""
 msgid "This is the amount you will receive at the end of the auction. Any excess earnings are sent to the pool"
 msgstr ""
 
+#: src/components/nugg/Wallet/tabs/ClaimTab/ClaimTab.tsx
+msgid "This is where you will be able to claim items you've won or reclaim ETH from auctions that you lost"
+msgstr ""
+
+#: src/components/nugg/Wallet/tabs/LoanTab/LoanTab.tsx
+msgid "This is where you will be able to manage nuggs that you have loaned out"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OfferText.tsx
 #: src/components/nugg/RingAbout/OfferText.tsx
 msgid "This sale is over"
 msgstr ""
 
 #: src/components/nugg/ViewingNugg/SwapList.tsx
 msgid "This {0} has never been sold"
+msgstr ""
+
+#: src/components/modals/OfferModal/OfferModal.tsx
+msgid "Transaction not found"
 msgstr ""
 
 #: src/components/mobile/NuggDexSearchBarMobile.tsx
@@ -617,7 +637,7 @@ msgid "Update"
 msgstr ""
 
 #: src/components/modals/OfferModal/OfferModal.tsx
-msgid "Update offer"
+msgid "Update offer for"
 msgstr ""
 
 #: src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar.tsx
@@ -667,10 +687,6 @@ msgstr ""
 
 #: src/components/nugg/Wallet/tabs/HomeTab/HomeTab.tsx
 msgid "You don't have any Nuggs yet!"
-msgstr ""
-
-#: src/components/nugg/Wallet/tabs/LoanTab/LoanTab.tsx
-msgid "You haven't loaned any nuggs yet!"
 msgstr ""
 
 #: src/components/modals/LoanOrBurnModal/LoanOrBurnModal.tsx
@@ -755,6 +771,7 @@ msgid "auctions 🕰"
 msgstr ""
 
 #: src/components/mobile/NuggDexSearchListMobile2.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 #: src/components/nuggbook/pages/set-up/Setup_1.tsx
 #: src/components/nuggbook/pages/set-up/Setup_2.tsx
 #: src/components/nuggbook/pages/set-up/Setup_3.tsx
@@ -774,6 +791,7 @@ msgid "being sold by"
 msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "bid on {0}"
 msgstr ""
 
@@ -980,7 +998,6 @@ msgid "how exactly does selling work?"
 msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
-#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "i got it"
 msgstr ""
 
@@ -1123,15 +1140,13 @@ msgid "my asking price (saved on-chain)"
 msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "my current bid"
 msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
-msgid "my desired bid"
-msgstr ""
-
 #: src/components/modals/OfferModal/OfferModal.tsx
-msgid "nah"
+msgid "my desired bid"
 msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
@@ -1194,6 +1209,10 @@ msgstr ""
 msgid "ok, so how do I buy em? 💸"
 msgstr ""
 
+#: src/components/modals/OfferModal/OfferModal.tsx
+msgid "on sale by {0}"
+msgstr ""
+
 #: src/components/nuggbook/pages/tldr/Tldr_5.tsx
 msgid "our auction system is built in a way that eliminates any monitary incentive an attacker may have"
 msgstr ""
@@ -1203,6 +1222,7 @@ msgid "owned by"
 msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "payment"
 msgstr ""
 
@@ -1221,6 +1241,10 @@ msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_2.tsx
 msgid "period"
+msgstr ""
+
+#: src/components/modals/OfferModal/OfferModal.tsx
+msgid "pick one of your nuggs to offer on this item"
 msgstr ""
 
 #: src/components/mobile/MobileWallet.tsx
@@ -1552,6 +1576,10 @@ msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_3.tsx
 msgid "🏧 If you are not the highest bidder, you must reclaim your bid in order for the money to return to your wallet"
+msgstr ""
+
+#: src/components/modals/OfferModal/OfferModal.tsx
+msgid "👀 looking..."
 msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_3.tsx
