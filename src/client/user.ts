@@ -22,6 +22,7 @@ import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
 import formatNuggItems from './formatters/formatNuggItems';
 import epoch from './epoch';
 import { OfferData } from './interfaces';
+import { LOAN_EPOCH_LENGTH } from '@src/web3/constants';
 
 export interface LoanData {
 	endingEpoch: number;
@@ -311,7 +312,69 @@ const store = create(
 				});
 			};
 
-			return { fetch, wipe, handleIncomingOffers };
+			const updateNuggs = (
+				nuggId: number,
+				eventType: 'Loan' | 'Liquidate' | 'Rebalance',
+				eth: BigNumber,
+				startingEpoch: number,
+			) => {
+				set((draft) => {
+					console.log(eventType);
+					switch (eventType) {
+						case 'Liquidate':
+							draft.loans.splice(
+								draft.loans.findIndex(
+									(loans) => loans.nugg.toRawIdNum() === nuggId,
+								),
+								1,
+							);
+							draft.loans = [...draft.loans];
+							draft.nuggs = draft.nuggs.map((nugg) => {
+								if (nugg.tokenId.toRawIdNum() === nuggId) {
+									nugg.activeLoan = null;
+								}
+								return nugg;
+							});
+							break;
+						case 'Loan':
+							draft.loans = [
+								{
+									nugg: nuggId.toNuggId(),
+									eth: new EthInt(eth),
+									startingEpoch,
+									endingEpoch: startingEpoch + LOAN_EPOCH_LENGTH,
+								},
+								...draft.loans,
+							];
+							draft.nuggs = draft.nuggs.map((nugg) => {
+								if (nugg.tokenId.toRawIdNum() === nuggId) {
+									nugg.activeLoan = true;
+								}
+								return nugg;
+							});
+							break;
+						case 'Rebalance':
+							draft.loans = draft.loans.map((loan) => {
+								if (loan.nugg.toRawIdNum() === nuggId) {
+									loan = {
+										nugg: nuggId.toNuggId(),
+										eth: new EthInt(eth),
+										startingEpoch,
+										endingEpoch: startingEpoch + LOAN_EPOCH_LENGTH,
+									};
+								}
+								return loan;
+							});
+							break;
+						default:
+							break;
+					}
+
+					return { ...draft };
+				});
+			};
+
+			return { fetch, wipe, handleIncomingOffers, updateNuggs };
 		},
 	),
 );
@@ -396,6 +459,7 @@ export default {
 	useUnclaimedOffers: () => store((draft) => draft.unclaimedOffers),
 	useLoans: () => store((draft) => draft.loans),
 	useFetch: () => store((draft) => draft.fetch),
+	useUpdateNuggs: () => store((draft) => draft.updateNuggs),
 	useUnclaimedOffersFilteredByEpoch,
 	useActiveOffers,
 	...store,

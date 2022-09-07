@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { t } from '@lingui/macro';
 
 import client from '@src/client';
@@ -10,7 +10,7 @@ import MultiLoanButton from './MultiLoanButton';
 import MultiRebalanceButton from './MultiRebalanceButton';
 import Flyout from '@src/components/general/Flyout/Flyout';
 import { IoEllipsisVertical } from 'react-icons/io5';
-import lib from '@src/lib';
+import lib, { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import useDimensions from '@src/client/hooks/useDimensions';
 // import MultiLiquidateButton from './MultiLiquidateButton';
 
@@ -47,13 +47,16 @@ const Buttons = () => {
 const LoanTab: FunctionComponent<Props> = () => {
 	const epoch = client.epoch.active.useId();
 	const loanedNuggs = client.user.useLoans();
+	const [trigger, setTrigger] = useState(true);
+	useEffect(() => setTrigger((_trigger) => !_trigger), [loanedNuggs]);
+	const nuggs = client.user.useNuggs();
 
 	return (
 		<div style={styles.container}>
 			<InfiniteList
 				data={loanedNuggs}
 				RenderItem={LoanRenderItem}
-				TitleButton={Buttons}
+				TitleButton={(!isUndefinedOrNullOrArrayEmpty(nuggs) && Buttons) || undefined}
 				label={t`Loaned Nuggs`}
 				style={styles.list}
 				extraData={epoch ?? 0}
@@ -63,6 +66,7 @@ const LoanTab: FunctionComponent<Props> = () => {
 				loaderColor="white"
 				action={() => undefined}
 				itemHeight={79.578}
+				_triggerRender={trigger}
 			/>
 		</div>
 	);

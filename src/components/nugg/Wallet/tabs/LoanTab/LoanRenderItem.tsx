@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 import { t } from '@lingui/macro';
 
 import { LoanData } from '@src/client/interfaces';
@@ -18,6 +18,14 @@ const LoanRenderItem: FunctionComponent<
 > = ({ item, index, extraData: epochId }) => {
 	const openModal = client.modal.useOpenModal();
 
+	const remaining = useMemo(() => {
+		let val = 0;
+		if (item && epochId) {
+			val = +item.endingEpoch - +epochId;
+		}
+		return val > 0 ? val : 0;
+	}, [item, epochId]);
+
 	return item ? (
 		<div key={index} style={styles.renderItemContainer}>
 			<div style={globalStyles.centered}>
@@ -27,7 +35,7 @@ const LoanRenderItem: FunctionComponent<
 						{item.nugg.toPrettyId()}
 					</Text>
 					<Text type="text" textStyle={styles.textDefault} size="smaller">
-						{epochId && `${+item.endingEpoch - +epochId} epochs remaining`}
+						{epochId && `${remaining} periods remaining`}
 					</Text>
 				</div>
 			</div>

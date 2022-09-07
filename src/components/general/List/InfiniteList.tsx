@@ -64,6 +64,7 @@ export interface InfiniteListProps<T, B, A> {
 
 	coreRef?: React.RefObject<HTMLDivElement> | null;
 	offsetListRef?: boolean;
+	_triggerRender?: boolean;
 }
 
 const LIST_PADDING = 4;
@@ -102,6 +103,7 @@ const InfiniteList = <T, B, A>({
 	// scrollTopOffset,
 	squishFactor = 1,
 	offsetListRef = false,
+	_triggerRender,
 }: InfiniteListProps<T, B, A>) => {
 	const [interval] = React.useState(_interval * squishFactor);
 
@@ -164,6 +166,8 @@ const InfiniteList = <T, B, A>({
 	//     if (items.length !== (prevItems?.length || 0)) force();
 	// }, [items.length, prevItems?.length, force]);
 
+	const prevTrigger = usePrevious(_triggerRender);
+
 	const builderCallback = React.useCallback(() => {
 		const key = (i: number) => `infinte-item-${id || 'unknown'}-${i}`;
 
@@ -190,12 +194,13 @@ const InfiniteList = <T, B, A>({
 		);
 		setItems((_items) => {
 			if (
-				data &&
-				prevData &&
-				(data.length < prevData.length ||
-					(data.length > 0 &&
-						prevData.length > 0 &&
-						JSON.stringify(data[0]) !== JSON.stringify(prevData[0])))
+				(data &&
+					prevData &&
+					(data.length < prevData.length ||
+						(data.length > 0 &&
+							prevData.length > 0 &&
+							JSON.stringify(data[0]) !== JSON.stringify(prevData[0])))) ||
+				prevTrigger !== _triggerRender
 			) {
 				_items = data.map((_, i) => buildItem(i));
 				return _items;
@@ -233,6 +238,8 @@ const InfiniteList = <T, B, A>({
 		selected,
 		itemHeight,
 		skipSelectedCheck,
+		_triggerRender,
+		prevTrigger,
 	]);
 
 	// console.log({ data, items });
@@ -243,7 +250,8 @@ const InfiniteList = <T, B, A>({
 			prevStart !== startIndex ||
 			(deep
 				? JSON.stringify(prevData) !== JSON.stringify(data)
-				: prevData?.length !== data.length)
+				: prevData?.length !== data.length) ||
+			prevTrigger !== _triggerRender
 		) {
 			builderCallback();
 			force();
@@ -260,6 +268,8 @@ const InfiniteList = <T, B, A>({
 		prevData,
 		force,
 		items,
+		prevTrigger,
+		_triggerRender,
 	]);
 
 	const [lastGrabValue, setLastGrabValue] = React.useState<number>(0);

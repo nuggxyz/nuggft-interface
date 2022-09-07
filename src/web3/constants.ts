@@ -288,6 +288,8 @@ export const ENS_GRAPH_ENDPOINTS = {
 	[Chain.KOVAN]: 'n/a',
 };
 
+export const LOAN_EPOCH_LENGTH = 200;
+
 export const getNetwork = (chainId: Chain): Network => ({
 	name: CHAIN_LABEL[chainId],
 	chainId,

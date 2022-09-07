@@ -12,6 +12,7 @@ import client from '..';
 export default () => {
 	const updateOffers = client.token.useUpdateOffers();
 	const updateStake = client.stake.useUpdate();
+	const updateNuggs = client.user.useUpdateNuggs();
 	const nuggs = client.user.useNuggs();
 
 	const epoch = client.epoch.active.useId();
@@ -134,6 +135,7 @@ export default () => {
 					emitCompletedTx(agencyParsed.address as AddressString, (from) => {
 						return from.toLowerCase() === agencyParsed.address.toLowerCase();
 					});
+					updateNuggs(event.args.tokenId, event.name, agencyParsed.eth, agencyParsed.epoch);
 					break;
 				}
 
