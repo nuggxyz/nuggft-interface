@@ -10,7 +10,8 @@ import NavigationWrapper from '@src/components/nugg/PageLayout/NavigationWrapper
 import { ViewingNuggPhoneController } from '@src/components/mobile/ViewingNuggPhone';
 import useMountLogger from '@src/hooks/useMountLogger';
 
-import SearchOverlayWrapper from './search/SearchOverlayWrapper';
+// import SearchOverlayWrapper from './search/SearchOverlayWrapper';
+import SearchOverlay from './search/SearchOverlay';
 
 const MemoizedViewingNuggPhone = React.lazy(
 	() => import('@src/components/mobile/ViewingNuggPhoneWrapper'),
@@ -40,7 +41,7 @@ const Router = React.memo(() => {
 						: [
 								{
 									path: 'view/*',
-									element: <SearchOverlayWrapper isPhone={isPhone} />,
+									element: <SearchOverlay />, // <SearchOverlayWrapper isPhone={isPhone} />,
 								},
 						  ]),
 

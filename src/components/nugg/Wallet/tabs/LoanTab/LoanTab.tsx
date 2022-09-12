@@ -9,7 +9,7 @@ import styles from './LoanTab.styles';
 import MultiLoanButton from './MultiLoanButton';
 import MultiRebalanceButton from './MultiRebalanceButton';
 import Flyout from '@src/components/general/Flyout/Flyout';
-import { IoEllipsisVertical } from 'react-icons/io5';
+import { IoEllipsisHorizontal } from 'react-icons/io5';
 import lib, { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import useDimensions from '@src/client/hooks/useDimensions';
 // import MultiLiquidateButton from './MultiLiquidateButton';
@@ -30,10 +30,10 @@ const Buttons = () => {
 					style={{
 						background: lib.colors.white,
 						borderRadius: lib.layout.borderRadius.large,
-						padding: '.4rem .4rem 0rem .4rem',
+						padding: '.2rem .4rem 0rem .4rem',
 					}}
 				>
-					<IoEllipsisVertical color={lib.colors.nuggRedText} />
+					<IoEllipsisHorizontal color={lib.colors.nuggRedText} size={10} />
 				</div>
 			}
 		>

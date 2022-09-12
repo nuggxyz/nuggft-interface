@@ -130,14 +130,18 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
 								}}
 							>
 								{previewNuggsStable}
-								<NuggLinkAnchor
-									onClick={() =>
-										updateSearchFilterViewing(
-											viewing === type ? SearchView.Home : type,
-										)
-									}
-									style={limit > 3 ? styles.nuggLinkThumbnailContainerBig : {}}
-								/>
+								{previewNuggsStable.length >= 3 && (
+									<NuggLinkAnchor
+										onClick={() =>
+											updateSearchFilterViewing(
+												viewing === type ? SearchView.Home : type,
+											)
+										}
+										style={
+											limit > 3 ? styles.nuggLinkThumbnailContainerBig : {}
+										}
+									/>
+								)}
 							</animated.div>
 						)}
 
