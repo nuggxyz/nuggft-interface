@@ -181,6 +181,7 @@
         "@loadable/component": "^5.15.2",
         "@metamask/detect-provider": "^1.2.0",
         "@metamask/jazzicon": "^2.0.0",
+        "@nuggxyz/nugg-kit-react": "^0.3.2",
         "@react-spring/web": "^9.5.2",
         "@sentry/react": "^7.10.0",
         "@sentry/tracing": "^7.10.0",
