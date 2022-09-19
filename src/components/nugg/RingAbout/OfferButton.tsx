@@ -2,7 +2,7 @@ import React from 'react';
 import { t } from '@lingui/macro';
 
 import Button from '@src/components/general/Buttons/Button/Button';
-import lib, { isUndefinedOrNull, isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
 import useLifecycle from '@src/client/hooks/useLifecycle';
@@ -24,24 +24,17 @@ export default ({
 }) => {
 	const address = web3.hook.usePriorityAccount();
 	const token = client.token.useToken(tokenId);
+	const epoch = client.epoch.active.useId();
+
+	const v2 = client.v2.useSwap(tokenId);
 
 	const lifecycle = useLifecycle(tokenId);
 
 	const openModal = client.modal.useOpenModal();
 
 	const isOver = React.useMemo(() => {
-		return (
-			(!isUndefinedOrNullOrStringEmpty(address) &&
-				!(
-					lifecycle &&
-					lifecycle !== 'shower' &&
-					lifecycle !== 'stands' &&
-					lifecycle !== 'cut' &&
-					lifecycle !== 'tryout'
-				)) ||
-			isUndefinedOrNull(token?.activeSwap)
-		);
-	}, [token, lifecycle, address]);
+		return v2 && epoch && v2.endingEpoch < epoch;
+	}, [token, lifecycle, address, epoch, v2]);
 
 	const navigate = useNavigate();
 

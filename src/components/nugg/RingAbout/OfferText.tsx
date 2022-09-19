@@ -12,8 +12,12 @@ import { isUndefinedOrNull } from '@src/lib';
 const OfferText = ({ tokenId, textStyle }: { tokenId?: TokenId; textStyle?: CSSProperties }) => {
 	const token = client.token.useToken(tokenId);
 	const lifecycle = useLifecycle(tokenId);
+	const v2 = client.v2.useSwap(tokenId);
+	const epoch = client.epoch.active.useId();
 
-	const hasBids = client.token.useOffers(tokenId).length !== 0;
+	const hasBids = React.useMemo(() => {
+		return v2 !== undefined && v2.numOffers !== 0;
+	}, [epoch, v2, tokenId]);
 
 	const text = useMemo(() => {
 		if (!token || !lifecycle) return '';
