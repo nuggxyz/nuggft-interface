@@ -176,7 +176,7 @@ const NuggList: FunctionComponent<NuggListProps> = ({
 								right: '0rem',
 								overeflow: 'hidden',
 							}}
-							openOnHover
+							openOnHover={screenType === 'desktop'}
 						>
 							{toggleInitialState.map((val) => (
 								<React.Fragment key={val}>

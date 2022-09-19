@@ -14,10 +14,11 @@ const OfferText = ({ tokenId, textStyle }: { tokenId?: TokenId; textStyle?: CSSP
 	const lifecycle = useLifecycle(tokenId);
 	const v2 = client.v2.useSwap(tokenId);
 	const epoch = client.epoch.active.useId();
+	const others = client.token.useOffers(tokenId);
 
 	const hasBids = React.useMemo(() => {
-		return v2 !== undefined && v2.numOffers !== 0;
-	}, [epoch, v2, tokenId]);
+		return (v2 !== undefined && v2.numOffers !== 0) || others.length !== 0;
+	}, [epoch, v2, tokenId, others]);
 
 	const text = useMemo(() => {
 		if (!token || !lifecycle) return '';

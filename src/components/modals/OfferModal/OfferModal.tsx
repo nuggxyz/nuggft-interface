@@ -84,7 +84,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
 		// const inc = check?.increment ? (check.increment.toNumber() - 10000) / 100 : 5;
 		return [BigInt(inc), ...incrementers.filter((x) => x > inc).map((x) => BigInt(x))];
-	}, [data.endingEpoch, blocknum, v2]);
+	}, [data.endingEpoch, blocknum, v2, selectedNuggForItem]);
 
 	const myNuggs = useMemo(() => {
 		const nuggId = data.nuggToBuyFrom;
@@ -301,13 +301,25 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
 	React.useEffect(() => {
 		if (check && check.nextUserOffer && amount === '0') {
-			setAmount(new EthInt(check.nextUserOffer).toFixedStringRoundingUp(5));
-			setLastPressed(`${increments.first()}`);
+			wrappedSetAmount(
+				new EthInt(check.currentLeaderOffer).increaseToFixedStringRoundingUp(
+					increments.first(),
+					5,
+				),
+				`${increments.first()}`,
+			);
+			// setAmount(new EthInt(check.nextUserOffer).toFixedStringRoundingUp(5));
+			// setLastPressed(`${increments.first()}`);
 		}
-	}, [amount, check, increments]);
+	}, [amount, check, increments, selectedNuggForItem]);
 
 	React.useEffect(() => {
-		if (check && !isUndefinedOrNull(lastPressed) && increments.first() > BigInt(lastPressed)) {
+		if (
+			check &&
+			!isUndefinedOrNull(lastPressed) &&
+			increments.first() > BigInt(lastPressed) &&
+			(data.tokenId.isNuggId() || selectedNuggForItem)
+		) {
 			wrappedSetAmount(
 				new EthInt(check.currentLeaderOffer).increaseToFixedStringRoundingUp(
 					increments.first(),
@@ -316,7 +328,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 				`${increments.first()}`,
 			);
 		}
-	}, [increments, lastPressed, check?.nextUserOffer]);
+	}, [increments, lastPressed, check?.nextUserOffer, selectedNuggForItem]);
 
 	const [showNotice, setShowNotice] = useState(false);
 
@@ -327,7 +339,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
 	const currentBid = useUsdPair(check?.currentUserOffer);
 	const noBids = React.useMemo(() => {
-		return data.tokenId.toRawIdNum() === epoch && (v2 === undefined || v2.numOffers === 0);
+		return v2 === undefined || v2.numOffers === 0;
 	}, [epoch, v2, data.tokenId]);
 
 	const butcaller = React.useCallback(
