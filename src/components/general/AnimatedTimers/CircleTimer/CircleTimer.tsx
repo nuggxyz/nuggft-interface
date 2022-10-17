@@ -12,13 +12,14 @@ import styles from './CircleTimer.styles';
 type Props = React.PropsWithChildren<{
 	duration: number;
 	remaining: number;
-	blocktime: number;
-	staticColor: string;
+	// blocktime: number;
+	staticColor?: string;
+	strokeColor?: string;
 	style?: CSSProperties;
 	childrenContainerStyle?: CSSProperties;
 	width: number;
 	strokeWidth?: number;
-	defaultColor: string;
+	defaultColor?: string;
 	tokenId?: TokenId;
 }>;
 const TWOPI = Math.PI * 2;
@@ -29,9 +30,10 @@ const CircleTimer: FunctionComponent<Props> = ({
 	duration,
 	remaining,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	blocktime,
+	// blocktime,
 
 	staticColor,
+	strokeColor,
 	style,
 	width,
 	strokeWidth = 20,
@@ -73,6 +75,9 @@ const CircleTimer: FunctionComponent<Props> = ({
 
 	const shadowColor = useMemo(() => {
 		const percent = remaining / duration;
+		if (!staticColor && !defaultColor) {
+			return undefined;
+		}
 		if (percent > 1 && !isUndefinedOrNullOrStringEmpty(staticColor)) {
 			return staticColor;
 		}
@@ -89,12 +94,16 @@ const CircleTimer: FunctionComponent<Props> = ({
 		<div style={{ ...styles.container, ...style }}>
 			<div style={{ ...styles.childrenContainer, ...childrenContainerStyle }}>{children}</div>
 			<div
-				style={{
-					filter: `drop-shadow(-10px 0px 15px ${shadowColor})`,
-					willChange: 'filter',
-					height: '200%',
-					width: '200%',
-				}}
+				style={
+					shadowColor
+						? {
+								filter: `drop-shadow(-10px 0px 15px ${shadowColor})`,
+								willChange: 'filter',
+								height: '200%',
+								width: '200%',
+						  }
+						: { height: '100%', width: '100%' }
+				}
 			>
 				<svg height="100%" width="100%" style={styles.svgTransition}>
 					<animated.circle
@@ -108,7 +117,9 @@ const CircleTimer: FunctionComponent<Props> = ({
 						cx="50%"
 						cy="50%"
 						r={timerCircleRadius}
-						stroke={shadowColor === 'transparent' ? 'transparent' : 'white'}
+						stroke={
+							strokeColor || (shadowColor === 'transparent' ? 'transparent' : 'white')
+						}
 						strokeDashoffset={x}
 						strokeWidth={strokeWidth}
 						fill="none"

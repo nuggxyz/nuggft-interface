@@ -304,13 +304,14 @@ const useStore = create(
 				}
 
 				// console.warn(`CLEARING ${checks.length} SWAPS FROM EPOCH:${_epoch} - `);
-				if (checks.length > 0)
+				if (checks.length > 0) {
 					// @ts-ignore
 					set((draft) => {
 						for (let i = 0; i < checks.length; i++) {
 							delete draft[point].hits[checks[i]];
 						}
 					});
+				}
 
 				if (_lastEpochSwitch === 0) {
 					// @ts-ignore

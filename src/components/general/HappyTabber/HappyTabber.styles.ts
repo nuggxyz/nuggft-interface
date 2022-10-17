@@ -50,6 +50,7 @@ const styles = lib.layout.NLStyleSheetCreator({
 		width: '100%',
 		height: '100%',
 		position: 'relative',
+		overflow: 'scroll',
 	},
 	item: {
 		position: 'absolute',

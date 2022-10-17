@@ -44,9 +44,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
 
 	const MemoizedTimer = React.useMemo(() => {
 		return swap && !swap.isPotential && swap?.endingEpoch ? (
-			<div>
-				<Timer seconds={seconds ?? 0} resetOn={swap} />
-			</div>
+			<Timer seconds={seconds ?? 0} resetOn={swap} />
 		) : null;
 	}, [swap, seconds]);
 
@@ -116,7 +114,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
 					<Text
 						textStyle={{
 							color: lib.colors.white,
-							padding: '1rem',
+							padding: '.8rem',
 							background: darkmode
 								? lib.colors.nuggBlueTransparent
 								: lib.colors.transparentGrey,

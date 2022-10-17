@@ -7,9 +7,9 @@ import FloorPrice from '@src/components/nugg/FloorPrice';
 import NuggDexSearchBar from '@src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar';
 import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/HealthIndicator';
 // import useBlur from '@src/hooks/useBlur';
-import useDimensions from '@src/client/hooks/useDimensions';
-import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';
-import lib from '@src/lib';
+// import useDimensions from '@src/client/hooks/useDimensions';
+// import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';
+// import lib from '@src/lib';
 
 import styles from './NavigationBar.styles';
 
@@ -18,11 +18,11 @@ type Props = {
 };
 
 const NavigationBar: FC<Props> = () => {
-	const [screenType] = useDimensions();
+	// const [screenType] = useDimensions();
 
 	const navigate = useNavigate();
 
-	const isViewOpen = useMatch('/view/*');
+	// const isViewOpen = useMatch('/view/*');
 	const isHome = useMatch('swap/:id');
 
 	const onClick = useCallback(() => {
@@ -68,7 +68,7 @@ const NavigationBar: FC<Props> = () => {
 					alignItems: 'center',
 				}}
 			>
-				<div
+				{/* <div
 					style={{
 						left: '-3.2rem',
 						position: 'absolute',
@@ -76,10 +76,10 @@ const NavigationBar: FC<Props> = () => {
 						transition: `all .5s ${lib.layout.animation}`,
 					}}
 				>
-					<HealthIndicator />
-				</div>
-				<ChainIndicator />
-				{screenType === 'tablet' && (
+				</div> */}
+				<HealthIndicator />
+				{/* <ChainIndicator /> */}
+				{/* {screenType === 'tablet' && (
 					<div
 						style={{
 							position: 'absolute',
@@ -89,16 +89,17 @@ const NavigationBar: FC<Props> = () => {
 					>
 						<FloorPrice />
 					</div>
-				)}
+				)} */}
 			</div>
 
 			<div
 				style={{
 					...styles.linkAccountContainer,
-					justifyContent: screenType === 'desktop' ? 'space-between' : 'flex-end',
+					// justifyContent: screenType === 'desktop' ? 'space-between' : 'flex-end',
+					justifyContent: 'space-between',
 				}}
 			>
-				{screenType === 'desktop' && <FloorPrice />}
+				<FloorPrice />
 
 				<AccountViewer />
 			</div>

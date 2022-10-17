@@ -3,8 +3,8 @@ import { t } from '@lingui/macro';
 
 import HappyTabber, { HappyTabberItem } from '@src/components/general/HappyTabber/HappyTabber';
 import web3 from '@src/web3';
-import RingAbout from '@src/components/nugg/RingAbout/RingAbout';
-import lib from '@src/lib';
+// import RingAbout from '@src/components/nugg/RingAbout/RingAbout';
+// import lib from '@src/lib';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import useDimensions from '@src/client/hooks/useDimensions';
 import HomeTabMobile from '@src/components/mobile/MobileWallet';
@@ -17,7 +17,7 @@ import ActiveTab from './tabs/ActiveTab/ActiveTab';
 
 type Props = Record<string, never>;
 
-const abc = React.memo(() => <RingAbout asHappyTab />);
+// const abc = React.memo(() => <RingAbout asHappyTab />);
 
 const Wallet: FunctionComponent<Props> = () => {
 	const [screenType] = useDimensions();
@@ -35,15 +35,15 @@ const Wallet: FunctionComponent<Props> = () => {
 								label: t`Active`,
 								comp: React.memo(ActiveTab),
 							},
-							{
-								label: t`Swap`,
-								comp: abc,
-								labelStyle: { color: lib.colors.nuggBlueText },
-								bodyStyle: {
-									background: lib.colors.gradient2,
-									boxShadow: `${lib.layout.boxShadow.prefix} ${lib.colors.shadowNuggBlue}`,
-								},
-							},
+							// {
+							// 	label: t`Swap`,
+							// 	comp: abc,
+							// 	labelStyle: { color: lib.colors.nuggBlueText },
+							// 	bodyStyle: {
+							// 		background: lib.colors.gradient2,
+							// 		boxShadow: `${lib.layout.boxShadow.prefix} ${lib.colors.shadowNuggBlue}`,
+							// 	},
+							// },
 							{
 								label: t`Home`,
 								comp: React.memo(HomeTab),

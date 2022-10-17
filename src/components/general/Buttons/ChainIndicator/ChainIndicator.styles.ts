@@ -9,10 +9,10 @@ const styles = lib.layout.NLStyleSheetCreator({
 		flexGrow: 2,
 		dipaly: 'flex',
 		alignItems: 'center',
-		padding: '.1rem 1rem .1rem .5rem',
+		padding: '.1rem',
 	},
 	normal: {
-		background: lib.colors.nuggBlueTransparent,
+		background: lib.colors.semiTransparentWhite,
 		color: lib.colors.nuggBlueText,
 	},
 	warning: {

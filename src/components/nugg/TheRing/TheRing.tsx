@@ -31,9 +31,9 @@ type Props = {
 };
 
 export const useRemainingBlocks = (
-	blocknum?: number,
-	startBlock?: number,
-	endingEpoch?: number,
+	blocknum?: number | null,
+	startBlock?: number | null,
+	endingEpoch?: number | null,
 ) => {
 	return React.useMemo(() => {
 		if (!blocknum || !startBlock || !endingEpoch) return [1, 1];
