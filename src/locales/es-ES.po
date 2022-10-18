@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-08-22 19:25+0000\n"
+"POT-Creation-Date: 2022-10-17 16:16+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Spanish\n"
-"PO-Revision-Date: 2022-08-23 06:12\n"
+"PO-Revision-Date: 2022-10-18 06:28\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
@@ -548,10 +548,6 @@ msgstr ""
 msgid "Starting in about {minutes} minutes"
 msgstr ""
 
-#: src/components/nugg/Wallet/Wallet.tsx
-msgid "Swap"
-msgstr ""
-
 #: src/components/nugg/ViewingNugg/SwapList.tsx
 msgid "Swap ending in {0} blocks"
 msgstr ""
@@ -1052,19 +1048,25 @@ msgstr ""
 msgid "last bid"
 msgstr ""
 
+#: src/components/general/Buttons/HealthIndicator/HealthIndicator.tsx
+#: src/components/general/Buttons/HealthIndicator/HealthIndicator.tsx
 #: src/components/mobile/MobileStatus.tsx
 #: src/components/mobile/MobileStatus.tsx
 msgid "last block"
 msgstr ""
 
+#: src/components/general/Buttons/HealthIndicator/HealthIndicator.tsx
 #: src/components/mobile/MobileStatus.tsx
 msgid "last eth price"
 msgstr ""
 
+#: src/components/general/Buttons/HealthIndicator/HealthIndicator.tsx
 #: src/components/mobile/MobileStatus.tsx
 msgid "last response"
 msgstr ""
 
+#: src/components/general/Buttons/HealthIndicator/HealthIndicator.tsx
+#: src/components/general/Buttons/HealthIndicator/HealthIndicator.tsx
 #: src/components/mobile/MobileStatus.tsx
 #: src/components/mobile/MobileStatus.tsx
 msgid "last updated"
