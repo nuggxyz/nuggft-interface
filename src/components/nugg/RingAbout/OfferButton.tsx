@@ -33,7 +33,7 @@ export default ({
 	const openModal = client.modal.useOpenModal();
 
 	const isOver = React.useMemo(() => {
-		return v2 && epoch && v2.endingEpoch < epoch;
+		return !v2 || !epoch || v2.endingEpoch < epoch;
 	}, [token, lifecycle, address, epoch, v2]);
 
 	const navigate = useNavigate();
@@ -87,11 +87,11 @@ export default ({
 				isUndefinedOrNullOrStringEmpty(address)
 					? t`Connect wallet`
 					: !token
-					? 'Loading...'
+					? t`Loading...`
 					: isOver
-					? 'Go to current auction'
+					? t`Go to current auction`
 					: lifecycle === Lifecycle.Bench
-					? 'Accept and Start Auction'
+					? t`Accept and Start Auction`
 					: t`Place offer`
 			}
 		/>
