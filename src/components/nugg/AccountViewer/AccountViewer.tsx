@@ -1,12 +1,10 @@
 import React from 'react';
-import { IoOpenOutline, IoPowerOutline } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 import { FiAtSign } from 'react-icons/fi';
 
 import Jazzicon from '@src/components/nugg/Jazzicon';
 import Text from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
-import NLStaticImage from '@src/components/general/NLStaticImage';
 import Flyout from '@src/components/general/Flyout/Flyout';
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib from '@src/lib';
@@ -15,15 +13,17 @@ import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import CurrencyToggler from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 import client from '@src/client';
 import { ModalEnum } from '@src/interfaces/modals';
+import ens_icon from '@src/assets/images/app_logos/ens.png';
 
 import styles from './AccountViewer.styles';
 import useDimensions from '@src/client/hooks/useDimensions';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 
 const AccountViewer = () => {
 	const chainId = web3.hook.usePriorityChainId();
 	const provider = web3.hook.usePriorityProvider();
-	const ens = web3.hook.usePriorityENSName(provider);
 	const address = web3.hook.usePriorityAccount();
+	const [ens, ensValid] = client.ens.useEnsWithValidity(provider, address);
 	const balance = web3.hook.usePriorityBalance(provider);
 	const peer = web3.hook.usePriorityPeer();
 	const connector = web3.hook.usePriorityConnector();
@@ -32,6 +32,8 @@ const AccountViewer = () => {
 
 	const currencyPref = client.usd.useCurrencyPreferrence();
 	const setCurrencyPref = client.usd.useSetCurrencyPreferrence();
+
+	const preferenceValue = client.usd.useUsdPair(balance);
 
 	const darkmode = useDarkMode();
 
@@ -64,44 +66,47 @@ const AccountViewer = () => {
 			style={styles.flyout}
 			triggerWidth="175px"
 			openOnHover={screen === 'desktop'}
-			top={15}
+			top={50}
 			button={
 				<div style={styles.textContainer}>
-					<div
-						style={{
-							...styles.header,
-						}}
-					>
-						<div style={globalStyles.centeredSpaceBetween}>
-							<Text type="text" size="medium" textStyle={styles.text}>
-								{ens.toLowerCase()}
-							</Text>
-							<NLStaticImage image={`${peer.peer}_icon_small`} />
-						</div>
-						<Text
-							size="smaller"
-							type="code"
-							textStyle={{
-								...styles.balance,
-								...(darkmode ? { color: 'white' } : {}),
-							}}
-						>
-							({web3.config.CHAIN_INFO[chainId].label})
-							{balance ? balance.decimal.toNumber().toPrecision(5) : 0} ETH
-						</Text>
-					</div>
-
-					<Jazzicon address={address} size={35} />
+					<Jazzicon
+						address={address}
+						size={15}
+						style={{ margin: '.25rem .5rem .25rem .25rem' }}
+					/>
+					<Text type="text" size="medium" textStyle={styles.text}>
+						{ens.toLowerCase()}
+					</Text>
 				</div>
 			}
 		>
 			<>
+				<div style={{ padding: '.5rem .75rem', ...globalStyles.centeredSpaceBetween }}>
+					<Text
+						type="title"
+						size="small"
+						textStyle={{
+							...styles.balance,
+							...(darkmode ? { color: 'white' } : {}),
+						}}
+					>
+						Balance
+					</Text>
+					<CurrencyText
+						textStyle={{ color: darkmode ? lib.colors.white : lib.colors.primaryColor }}
+						type="text"
+						size="smaller"
+						image="eth"
+						value={preferenceValue}
+					/>
+				</div>
 				<div
 					style={{
 						width: '100%',
 						...globalStyles.centered,
 						padding: '.5rem 0rem',
 						borderBottom: `1px solid ${lib.colors.transparentLightGrey}`,
+						borderTop: `1px solid ${lib.colors.transparentLightGrey}`,
 					}}
 				>
 					<CurrencyToggler
@@ -111,28 +116,71 @@ const AccountViewer = () => {
 					/>
 				</div>
 				<Button
+					className="mobile-pressable-div-shallow"
+					type="text"
+					label={!ensValid ? t`Pick username` : t`Edit username`}
+					onClick={() => {
+						openModal({ modalType: ModalEnum.Name as const });
+					}}
+					hoverStyle={{ background: lib.colors.nuggBlueTransparent }}
+					// buttonStyle={{
+					// 	borderRadius: lib.layout.borderRadius.medium,
+					// 	background: !ensValid
+					// 		? lib.colors.nuggRedText
+					// 		: lib.colors.transparentWhite,
+					// 	padding: '10px 10px',
+					// 	alignItems: 'center',
+					// 	boxShadow: lib.layout.boxShadow.basic,
+					// 	WebkitBackdropFilter: 'blur(50px)',
+					// 	backdropFilter: 'blur(50px)',
+					// }}
+					leftIcon={
+						ensValid ? (
+							<img
+								alt="ens logo"
+								src={ens_icon}
+								height={20}
+								style={{
+									borderRadius: lib.layout.borderRadius.small,
+									objectFit: 'cover',
+									marginRight: '.75rem',
+								}}
+							/>
+						) : (
+							<span style={{ fontSize: 20, marginRight: '.75rem' }}>⚠️</span>
+						)
+					}
+					buttonStyle={{
+						...styles.flyoutButton,
+						height: '50.79px',
+					}}
+					textStyle={{
+						color: !ensValid ? lib.colors.white : lib.colors.primaryColor,
+					}}
+				/>
+				<Button
+					className="mobile-pressable-div-shallow"
 					label={t`Explore`}
 					type="text"
 					buttonStyle={styles.flyoutButton}
+					hoverStyle={{ background: lib.colors.nuggBlueTransparent }}
 					leftIcon={
-						<IoOpenOutline
-							color={lib.colors.nuggBlueText}
-							size={25}
-							style={{ marginRight: '.75rem' }}
-						/>
+						<Text size="large" textStyle={{ marginRight: '.75rem' }}>
+							🔭
+						</Text>
 					}
 					onClick={() => web3.config.gotoEtherscan(chainId, 'address', address)}
 				/>
 				<Button
+					className="mobile-pressable-div-shallow"
 					type="text"
-					label={t`Disconnect`}
+					label={t`Peace out`}
 					buttonStyle={styles.flyoutButton}
+					hoverStyle={{ background: lib.colors.nuggBlueTransparent }}
 					leftIcon={
-						<IoPowerOutline
-							color={lib.colors.nuggBlueText}
-							size={25}
-							style={{ marginRight: '.75rem' }}
-						/>
+						<Text size="large" textStyle={{ marginRight: '.75rem' }}>
+							✌️
+						</Text>
 					}
 					onClick={() => {
 						void connector.deactivate();

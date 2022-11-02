@@ -10,6 +10,10 @@ const styles = lib.layout.NLStyleSheetCreator({
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center',
+		background: lib.colors.nuggBlueTransparent,
+		boxShadow: lib.layout.boxShadow.basic,
+		padding: '.5rem',
+		borderRadius: lib.layout.borderRadius.mediumish,
 	},
 	header: {
 		display: 'flex',
@@ -23,7 +27,8 @@ const styles = lib.layout.NLStyleSheetCreator({
 	},
 	flyout: {
 		right: '1rem',
-		top: '1.5rem',
+		width: '12rem',
+		// top: '1.5rem',
 	},
 	flyoutButton: {
 		padding: '.75rem 1rem .75rem 1rem',

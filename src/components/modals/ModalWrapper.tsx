@@ -15,6 +15,7 @@ import QrCodeModal from './QrCodeModal/QrCodeModal';
 import SellNuggOrItemModal from './SellNuggOrItemModal/SellNuggOrItemModal';
 import NuggBookModal from './NuggBookModal/NuggBookModal';
 import WalletModal from './WalletModal/WalletModal';
+import NameModal from './NameModal/NameModal';
 
 const getter = ({ data }: { data?: ModalType }) => {
 	switch (data?.modalType) {
@@ -32,6 +33,8 @@ const getter = ({ data }: { data?: ModalType }) => {
 			return <NuggBookModal />;
 		case ModalEnum.Wallet:
 			return <WalletModal />;
+		case ModalEnum.Name:
+			return <NameModal />;
 		case undefined:
 		default:
 			return null;

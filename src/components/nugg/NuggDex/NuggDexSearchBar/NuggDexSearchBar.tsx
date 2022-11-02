@@ -240,7 +240,6 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
 	});
 
 	const resultStyle = useSpring({
-		...styles.resultContainer,
 		width: show ? '103%' : '100%',
 		height: show ? (agg.length === 0 ? '230%' : '1100%') : '100%',
 		top: show ? '-20%' : '0%',
@@ -250,7 +249,13 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
 
 	return (
 		<animated.div ref={ref} style={style}>
-			<animated.div style={resultStyle}>
+			<animated.div
+				style={{
+					...resultStyle,
+					boxShadow: lib.layout.boxShadow.basic,
+					...styles.resultContainer,
+				}}
+			>
 				<div style={styles.resultsList}>
 					{agg.length === 0 ? (
 						<Text textStyle={styles.resultText}>
@@ -375,6 +380,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
 					width: '100%',
 					position: 'relative',
 					background: lib.colors.nuggBlueTransparent,
+					...(!show ? { boxShadow: lib.layout.boxShadow.basic } : {}),
 					...animatedBR,
 				}}
 				disabled={!isViewOpen}

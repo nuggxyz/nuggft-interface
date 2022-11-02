@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { plural, t } from '@lingui/macro';
 import { animated, config, useTransition } from '@react-spring/web';
 import { IoChevronBackCircle } from 'react-icons/io5';
@@ -33,6 +33,7 @@ import usePrevious from '@src/hooks/usePrevious';
 import Loader from '@src/components/general/Loader/Loader';
 
 import PeerButtonMobile from './PeerButtonMobile';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 const commitGas = 46500;
 const setNameGas = 54500;
@@ -46,6 +47,10 @@ export const useRegisterEnsName = () => {
 	const provider = web3.hook.usePriorityProvider();
 	const address = web3.hook.usePriorityAccount();
 	const [ens, ensValid] = client.ens.useEnsWithValidity(provider, address);
+
+	const [screenType] = useDimensions();
+
+	const clickSimulator = useRef<HTMLDivElement>(null);
 
 	const controller = useENSRegistrarController(provider);
 	const resolver = useENSResolver(provider);
@@ -314,7 +319,9 @@ export const useRegisterEnsName = () => {
 					<PeerButtonMobile
 						onClick={(event) => {
 							event.preventDefault();
-							event.stopPropagation();
+							if (screenType === 'phone') {
+								event.stopPropagation();
+							}
 							commit();
 						}}
 						fee={commitFeeUsd}
@@ -327,7 +334,9 @@ export const useRegisterEnsName = () => {
 					<PeerButtonMobile
 						onClick={(event) => {
 							event.preventDefault();
-							event.stopPropagation();
+							if (screenType === 'phone') {
+								event.stopPropagation();
+							}
 							reverse();
 						}}
 						fee={reverseFeeUsd}
@@ -342,7 +351,9 @@ export const useRegisterEnsName = () => {
 					<PeerButtonMobile
 						onClick={(event) => {
 							event.preventDefault();
-							event.stopPropagation();
+							if (screenType === 'phone') {
+								event.stopPropagation();
+							}
 							register();
 						}}
 						fee={registerFeeUsd}
@@ -448,7 +459,9 @@ export const useRegisterEnsName = () => {
 					header="buy a name"
 					onClick={(event) => {
 						event.preventDefault();
-						event.stopPropagation();
+						if (screenType === 'phone') {
+							event.stopPropagation();
+						}
 						setPage('pick');
 					}}
 				/>
@@ -609,6 +622,7 @@ export const useRegisterEnsName = () => {
 	const Registration = React.useMemo(
 		() => (
 			<div
+				ref={clickSimulator}
 				style={{
 					width: '100%',
 					display: 'flex',
@@ -651,8 +665,8 @@ export const useRegisterEnsName = () => {
 							marginBottom: '10px',
 						}}
 					>
-						<div
-							style={{
+						<Text
+							textStyle={{
 								maxWidth: 30,
 								maxHeight: 30,
 								display: 'flex',
@@ -664,7 +678,7 @@ export const useRegisterEnsName = () => {
 							}}
 						>
 							1
-						</div>
+						</Text>
 						<div
 							style={{
 								width: '100%',
@@ -681,7 +695,7 @@ export const useRegisterEnsName = () => {
 										: lib.colors.primaryColor,
 								}}
 							>
-								tell ens i want to purchase
+								tell ens in want to purchase
 							</Text>
 							<Text
 								textStyle={{
@@ -721,8 +735,8 @@ export const useRegisterEnsName = () => {
 								marginBottom: '10px',
 							}}
 						>
-							<div
-								style={{
+							<Text
+								textStyle={{
 									maxWidth: 30,
 									maxHeight: 30,
 									display: 'flex',
@@ -734,7 +748,7 @@ export const useRegisterEnsName = () => {
 								}}
 							>
 								2
-							</div>
+							</Text>
 							<div
 								style={{
 									width: '100%',
@@ -806,8 +820,8 @@ export const useRegisterEnsName = () => {
 									marginBottom: '10px',
 								}}
 							>
-								<div
-									style={{
+								<Text
+									textStyle={{
 										maxWidth: 30,
 										maxHeight: 30,
 										display: 'flex',
@@ -819,7 +833,7 @@ export const useRegisterEnsName = () => {
 									}}
 								>
 									3
-								</div>
+								</Text>
 								<div
 									style={{
 										width: '100%',
@@ -871,8 +885,25 @@ export const useRegisterEnsName = () => {
 			registerLoading,
 			registerData?.ok,
 			Butt,
+			clickSimulator,
 		],
 	);
+
+	useEffect(() => {
+		if (clickSimulator.current) {
+			clickSimulator!.current!.click();
+		}
+	}, [
+		clickSimulator,
+		commitDone,
+		commitLoading,
+		reverseDone,
+		reverseLoading,
+		registerDone,
+		registerLoading,
+		registerData?.ok,
+		Butt,
+	]);
 
 	const inject = client.ens.useInject();
 

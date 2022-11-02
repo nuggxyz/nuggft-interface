@@ -885,6 +885,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 		<>
 			{viewing !== 1 && (
 				<Button
+					className="mobile-pressable-div-shallow"
 					buttonStyle={{
 						backgroundColor: lib.colors.transparentWhite,
 						boxShadow: lib.layout.boxShadow.basic,

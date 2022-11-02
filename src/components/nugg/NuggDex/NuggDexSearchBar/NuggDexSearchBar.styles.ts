@@ -34,7 +34,7 @@ const styles = lib.layout.NLStyleSheetCreator({
 		display: 'flex',
 		flexDirection: 'column',
 		overflow: 'hidden',
-		boxShadow: `${lib.layout.boxShadow.prefix} ${lib.layout.boxShadow.dark}`,
+		// boxShadow: `${lib.layot.boxShadow.prefix} ${lib.layout.boxShadow.dark}`,
 	},
 	resultsList: {
 		marginTop: '49px',

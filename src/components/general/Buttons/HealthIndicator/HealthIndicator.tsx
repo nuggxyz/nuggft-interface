@@ -13,6 +13,7 @@ import etherscan from '@src/assets/images/app_logos/etherscan.png';
 import eth from '@src/assets/images/app_logos/eth.png';
 import { t } from '@lingui/macro';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 const DisplayOk = () => {
 	// const rotate = useSpring({
@@ -359,9 +360,14 @@ const Status = () => {
 
 export default () => {
 	const graphProblem = client.health.useHealth();
+	const [screen] = useDimensions();
 
 	return (
-		<Flyout openOnHover button={!graphProblem ? <DisplayOk /> : <DisplayProblem />} top={50}>
+		<Flyout
+			openOnHover={screen === 'desktop'}
+			button={!graphProblem ? <DisplayOk /> : <DisplayProblem />}
+			top={50}
+		>
 			<Status />
 		</Flyout>
 	);
