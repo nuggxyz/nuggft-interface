@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { plural, t } from '@lingui/macro';
 import { animated, config, useTransition } from '@react-spring/web';
 import { IoChevronBackCircle } from 'react-icons/io5';
@@ -50,7 +50,9 @@ export const useRegisterEnsName = () => {
 
 	const [screenType] = useDimensions();
 
+	// for desktop
 	const clickSimulator = useRef<HTMLDivElement>(null);
+	const replaceToast = client.toast.useReplaceToast();
 
 	const controller = useENSRegistrarController(provider);
 	const resolver = useENSResolver(provider);
@@ -141,6 +143,8 @@ export const useRegisterEnsName = () => {
 	const blocknum = client.block.useBlock();
 	const [commitDone, setCommitDone] = React.useState(false);
 
+	const [hash, setHash] = useState<string>();
+
 	const commitData = useAsyncState(() => {
 		if (
 			!nameOk ||
@@ -172,7 +176,8 @@ export const useRegisterEnsName = () => {
 	}, [text, address, resolver, nameOk, blocknum, commitDone, page]);
 
 	const commit = React.useCallback(() => {
-		if (commitData && commitData.ok) void send(commitData.tx, () => setCommitLoading(true));
+		if (commitData && commitData.ok)
+			void send(commitData.tx, () => setCommitLoading(true)).then(setHash);
 	}, [commitData, send]);
 
 	const registerDone = useAsyncState(() => {
@@ -183,11 +188,21 @@ export const useRegisterEnsName = () => {
 		const waiter = async () => {
 			const assumed = await addr;
 			if (!assumed) return undefined;
-			return assumed.toLowerCase() === address;
+			const isDone = assumed.toLowerCase() === address;
+			if (hash && isDone) {
+				replaceToast({
+					id: hash,
+					duration: 5000,
+					loading: false,
+					error: false,
+					title: 'Successful Transaction',
+				});
+			}
+			return isDone;
 		};
 
 		return waiter();
-	}, [text, address, blocknum, provider, page]);
+	}, [text, address, blocknum, provider, page, hash]);
 
 	const registerData = useAsyncState(() => {
 		if (
@@ -233,7 +248,7 @@ export const useRegisterEnsName = () => {
 
 	const register = React.useCallback(() => {
 		if (registerData && registerData.ok)
-			void send(registerData.tx, () => setRegisterLoading(true));
+			void send(registerData.tx, () => setRegisterLoading(true)).then(setHash);
 	}, [registerData, send]);
 
 	const reverseDone = useAsyncState(() => {
@@ -244,12 +259,21 @@ export const useRegisterEnsName = () => {
 
 		const waiter = async () => {
 			const name = await resolver.attach(await reverseResolver).name(node);
-
-			return name === `${text}.eth`;
+			const isDone = name === `${text}.eth`;
+			if (hash && isDone) {
+				replaceToast({
+					id: hash,
+					duration: 5000,
+					loading: false,
+					error: false,
+					title: 'Successful Transaction',
+				});
+			}
+			return isDone;
 		};
 
 		return waiter();
-	}, [text, address, blocknum, provider]);
+	}, [text, address, blocknum, provider, hash]);
 
 	const reverseData = useAsyncState(() => {
 		if (!text || !address || !provider || !commitDone || reverseDone) return undefined;
@@ -270,7 +294,7 @@ export const useRegisterEnsName = () => {
 		if (reverseData && reverseData.ok)
 			void send(reverseData.tx, () => {
 				setReverseLoading(true);
-			});
+			}).then(setHash);
 	}, [reverseData, send]);
 
 	React.useEffect(() => {
@@ -280,8 +304,18 @@ export const useRegisterEnsName = () => {
 			((commitData && !!commitData.tx && !commitData.ok) || registerData?.ok || registerDone)
 		) {
 			setCommitDone(true);
+			if (hash) {
+				replaceToast({
+					id: hash,
+					duration: 5000,
+					loading: false,
+					error: false,
+					title: 'Successful Transaction',
+				});
+				setHash(undefined);
+			}
 		}
-	}, [commitData, registerData, commitDone, registerDone]);
+	}, [commitData, registerData, commitDone, registerDone, hash]);
 
 	const commitFeeUsd = useUsdPair(
 		commitData?.gasLimit ? commitData.gasLimit.mul(gasPrice ?? 0) : 0,
@@ -695,7 +729,7 @@ export const useRegisterEnsName = () => {
 										: lib.colors.primaryColor,
 								}}
 							>
-								tell ens in want to purchase
+								tell ens I want to purchase
 							</Text>
 							<Text
 								textStyle={{

@@ -11,6 +11,7 @@ const styles = lib.layout.NLStyleSheetCreator({
 		overflow: 'hidden',
 		height: '100%',
 		width: '100%',
+		zIndex: 99900001,
 	},
 	closeButton: {
 		position: 'absolute',
