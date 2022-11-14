@@ -2,7 +2,6 @@ import React, { FunctionComponent } from 'react';
 import { animated } from '@react-spring/web';
 
 import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
-import lib from '@src/lib';
 
 import Caboose from './Caboose';
 import OfferButton from './OfferButton';
@@ -33,7 +32,6 @@ const RingAbout: FunctionComponent<Props> = ({ manualTokenId }) => {
 			<animated.div
 				style={{
 					...styles.container,
-					boxShadow: lib.layout.boxShadow.dark,
 				}}
 			>
 				<div style={styles.bodyContainer}>

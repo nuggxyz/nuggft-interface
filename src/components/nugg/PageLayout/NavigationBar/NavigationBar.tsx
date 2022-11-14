@@ -38,12 +38,12 @@ const NavigationBar: FC<Props> = () => {
 			style={{
 				...styles.navBarContainer,
 				// ...container,
-				...(isHome
-					? {
-							backdropFilter: 'blur(1px)',
-							WebkitBackdropFilter: 'blur(1px)',
-					  }
-					: {}),
+				// ...(isHome
+				// 	? {
+				// 			backdropFilter: 'blur(1px)',
+				// 			WebkitBackdropFilter: 'blur(1px)',
+				// 	  }
+				// 	: {}),
 			}}
 		>
 			<div

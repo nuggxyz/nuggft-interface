@@ -22,6 +22,7 @@ const AnimatedCard: FunctionComponent<React.PropsWithChildren<{ disable?: boolea
 			style={{
 				zIndex: 1,
 				// cursor: 'none',
+				pointerEvents: 'auto',
 			}}
 		>
 			<animated.div

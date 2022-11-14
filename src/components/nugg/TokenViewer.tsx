@@ -98,6 +98,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
 				...(style?.zIndex && { zIndex: style?.zIndex }),
 				...animatedStyle, // transition: `opacity .5s ease`,
 				// ...strokeWidth,
+				pointerEvents: 'auto',
 			}}
 		>
 			<div

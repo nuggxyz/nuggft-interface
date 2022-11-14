@@ -19,7 +19,7 @@ const SwapPageDesktopSmall: FunctionComponent<Props> = () => {
 			style={{
 				...styles.container,
 				// ...blur,
-				alignItems: 'flex-start',
+				// alignItems: 'flex-start',
 			}}
 		>
 			<>

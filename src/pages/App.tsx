@@ -24,7 +24,7 @@ const Router = React.memo(() => {
 	const [screen, isPhone] = useDimensions();
 
 	const epoch = client.epoch.active.useId();
-	useMountLogger('Router');
+	// useMountLogger('Router');
 
 	const arr = React.useMemo(
 		() => [
@@ -73,7 +73,7 @@ const Router = React.memo(() => {
 
 const App = () => {
 	const [screen, isPhone] = useDimensions();
-	useMountLogger('App');
+	// useMountLogger('App');
 
 	return (
 		<>

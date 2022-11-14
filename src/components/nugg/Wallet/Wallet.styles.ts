@@ -14,7 +14,7 @@ const styles = lib.layout.NLStyleSheetCreator({
 		flexDirection: 'column',
 		justifyContent: 'space-between',
 		width: '100%', // '430px',
-		height: '80%',
+		height: '90%',
 		position: 'relative',
 		// position: 'absolute',
 		justifySelf: 'center',

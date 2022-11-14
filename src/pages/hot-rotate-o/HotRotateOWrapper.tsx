@@ -2,7 +2,7 @@ import React from 'react';
 
 const HotRotateOController = React.lazy(() => import('./HotRotateO'));
 
-const SwapPageWrapper = React.memo<{ screen: 'phone' | 'tablet' | 'desktop' }>(
+const HotRotateOWrapper = React.memo<{ screen: 'phone' | 'tablet' | 'desktop' }>(
 	({ screen }) => {
 		return screen === 'phone' ? null : (
 			<div style={{ animation: 'mobile-fade .3s ease-out' }}>
@@ -13,4 +13,4 @@ const SwapPageWrapper = React.memo<{ screen: 'phone' | 'tablet' | 'desktop' }>(
 	(a, b) => a.screen === b.screen,
 );
 
-export default SwapPageWrapper;
+export default HotRotateOWrapper;

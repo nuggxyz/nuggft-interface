@@ -2,7 +2,7 @@ import lib from '@src/lib';
 
 const styles = lib.layout.NLStyleSheetCreator({
 	container: {
-		boxShadow: `${lib.layout.boxShadow.prefix} ${lib.colors.shadowNuggBlue}`,
+		// boxShadow: `${lib.layout.boxShadow.prefix} ${lib.colors.shadowNuggBlue}`,
 		display: 'flex',
 		alignItems: 'center',
 		flexDirection: 'column',
@@ -15,6 +15,7 @@ const styles = lib.layout.NLStyleSheetCreator({
 		position: 'relative',
 		height: 'auto',
 		pointerEvents: 'auto',
+		boxShadow: lib.layout.boxShadow.dark,
 	},
 	containerDark: {
 		boxShadow: `${lib.layout.boxShadow.prefix} ${lib.colors.shadowNuggBlue}`,

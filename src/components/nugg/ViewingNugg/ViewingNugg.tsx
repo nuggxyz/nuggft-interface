@@ -301,7 +301,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
 			<div style={styles.swaps}>
 				<div style={styles.owner}>
 					<div style={{ display: 'flex' }}>
-						<Text textStyle={styles.nuggId} size="larger">
+						<Text textStyle={styles.nuggId} size="large">
 							{tokenId && tokenId.toPrettyId()}
 						</Text>
 						{token && token.type === 'nugg' ? (

@@ -24,20 +24,18 @@ const SwapPageDesktopLarge: FunctionComponent<Props> = () => {
 				alignItems: 'flex-start',
 			}}
 		>
-			<>
-				<div style={styles.secondaryContainer}>
-					<div style={styles.innerContainer}>
-						<RingAbout manualTokenId={tokenId} />
-					</div>
-					<div style={styles.innerContainer}>
-						<Wallet />
-					</div>
+			<div style={styles.secondaryContainer}>
+				<div style={styles.innerContainer}>
+					<RingAbout manualTokenId={tokenId} />
 				</div>
-				<div style={styles.theRingContainer}>
-					<TheRing manualTokenId={tokenId} />
+				<div style={styles.innerContainer}>
+					<Wallet />
 				</div>
-				<DesktopToggleButton />
-			</>
+			</div>
+			<div style={styles.theRingContainer}>
+				<TheRing manualTokenId={tokenId} />
+			</div>
+			<DesktopToggleButton />
 		</animated.div>
 	);
 };
