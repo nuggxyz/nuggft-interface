@@ -10,6 +10,7 @@ const FontSize = {
 	h5: 15,
 	h6: 13.5,
 	p: 12,
+	tiny: 10,
 	button: 22,
 } as const;
 

@@ -9,6 +9,7 @@ export interface TextProps {
 	children: string | string[] | ReactNode | ReactNode[];
 	weight?: 'light' | 'regular' | 'bold' | 'bolder';
 	size?:
+		| 'smallest'
 		| 'smaller'
 		| 'small'
 		| 'medium'

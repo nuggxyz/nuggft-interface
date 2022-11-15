@@ -25,6 +25,9 @@ const styles = lib.layout.NLStyleSheetCreator({
 	bolder: {
 		fontWeight: lib.layout.presets.weight.heavy,
 	},
+	smallest: {
+		fontSize: lib.fontSize.tiny,
+	},
 	smaller: {
 		fontSize: lib.fontSize.p,
 	},

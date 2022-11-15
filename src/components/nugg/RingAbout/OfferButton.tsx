@@ -33,7 +33,11 @@ export default ({
 	const openModal = client.modal.useOpenModal();
 
 	const isOver = React.useMemo(() => {
-		return !v2 || !epoch || v2.endingEpoch < epoch;
+		return (
+			(!v2 || !epoch || v2.endingEpoch < epoch) &&
+			lifecycle !== Lifecycle.Bench &&
+			lifecycle !== Lifecycle.Minors
+		);
 	}, [token, lifecycle, address, epoch, v2]);
 
 	const navigate = useNavigate();

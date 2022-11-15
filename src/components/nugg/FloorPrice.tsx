@@ -1,6 +1,4 @@
 import React, { CSSProperties, FunctionComponent } from 'react';
-import { animated, useSpring } from '@react-spring/web';
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import { t } from '@lingui/macro';
 
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
@@ -13,25 +11,22 @@ type Props = { style?: CSSProperties };
 
 const FloorPrice: FunctionComponent<Props> = ({ style }) => {
 	const stake__eps = client.stake.useEps();
-	const stake__shares = client.stake.useShares();
-
-	const springStyle = useSpring({
-		// zIndex: 1000,
-		display: 'flex',
-		borderRadius: lib.layout.borderRadius.large,
-		alignItems: 'center',
-		justifyContent: 'center',
-		margin: '.3rem 0rem',
-		opacity: stake__shares !== BigNumber.from(0) ? 1 : 0,
-		...style,
-	});
 
 	const preferenceValue = client.usd.useUsdPair(stake__eps);
 
 	const darkmode = useDarkMode();
 
 	return (
-		<animated.div style={springStyle}>
+		<div
+			style={{
+				...style,
+				display: 'flex',
+				borderRadius: lib.layout.borderRadius.large,
+				alignItems: 'center',
+				justifyContent: 'center',
+				margin: '.3rem 0rem',
+			}}
+		>
 			<Text
 				type="text"
 				size="smaller"
@@ -51,7 +46,7 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
 				image="eth"
 				value={preferenceValue}
 			/>
-		</animated.div>
+		</div>
 	);
 };
 
