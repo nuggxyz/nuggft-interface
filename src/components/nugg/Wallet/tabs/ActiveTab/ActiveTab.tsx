@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { t } from '@lingui/macro';
 import { IoLocate, IoSearch } from 'react-icons/io5';
 import curriedLighten from 'polished/lib/color/lighten';
@@ -17,6 +17,7 @@ import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 
 import styles from './ActiveTab.styles';
+import { SearchView } from '@src/client/interfaces';
 
 const fancy = curriedLighten(0.25)(lib.colors.blue);
 
@@ -50,6 +51,10 @@ export const ActiveRenderItem = ({
 		}
 		return token?.activeSwap?.leader;
 	}, [token, itemNugg]);
+
+	const [opacitySearch, setSearch] = useState(1);
+	const [opacitySale, setSale] = useState(1);
+
 	return tokenId ? (
 		<div
 			style={{
@@ -73,7 +78,7 @@ export const ActiveRenderItem = ({
 					background: fancy,
 					position: 'absolute',
 					top: 5,
-					left: 5,
+					// left: 5,
 				}}
 			/>
 			{account &&
@@ -114,16 +119,27 @@ export const ActiveRenderItem = ({
 				style={{
 					display: 'flex',
 					width: '100%',
-					justifyContent: 'space-between',
-					padding: '.2rem .4rem .4rem .4rem',
+					height: '2.6rem',
+					// justifyContent: 'space-between',
+					// padding: '.2rem .4rem .4rem .4rem',
 				}}
 			>
 				<Button
 					onClick={() => {
 						gotoViewingNugg(tokenId);
 					}}
-					buttonStyle={styles.button}
+					buttonStyle={{
+						...styles.button,
+						left: '.4rem',
+						opacity: opacitySearch,
+					}}
 					rightIcon={<IoSearch color={lib.colors.white} />}
+					hoverText={t`Go to search`}
+					size="smallest"
+					bypassDisableStyle
+					disableHoverAnimation
+					textStyle={{ color: lib.colors.white, paddingRight: '.3rem' }}
+					isHovering={(hover) => setSale(hover ? 0 : 1)}
 				/>
 				<Button
 					onClick={() => {
@@ -131,13 +147,43 @@ export const ActiveRenderItem = ({
 					}}
 					buttonStyle={{
 						...styles.button,
+						right: '.4rem',
 						background: lib.colors.gradient2Transparent,
+						opacity: opacitySale,
 					}}
-					rightIcon={<IoLocate color={lib.colors.white} />}
+					leftIcon={<IoLocate color={lib.colors.white} />}
+					hoverText={t`Go to sale`}
+					bypassDisableStyle
+					disableHoverAnimation
+					size="smallest"
+					textStyle={{ color: lib.colors.white, paddingLeft: '.3rem' }}
+					isHovering={(hover) => setSearch(hover ? 0 : 1)}
 				/>
 			</div>
 		</div>
 	) : null;
+};
+
+const GoToSearch: FunctionComponent<Record<string, unknown>> = () => {
+	const updateSearchFilterViewing = client.mutate.updateSearchFilterViewing();
+	const navigate = useNavigate();
+	return (
+		<Button
+			className="mobile-pressable-div-shallow"
+			buttonStyle={{
+				borderRadius: lib.layout.borderRadius.large,
+				boxShadow: lib.layout.boxShadow.basic,
+				padding: '.3rem .6rem',
+				marginTop: '.3rem',
+			}}
+			size="small"
+			onClick={() => {
+				updateSearchFilterViewing(SearchView.Pending);
+				navigate('/view');
+			}}
+			label={t`Find auctions to bid on`}
+		/>
+	);
 };
 
 export default () => {
@@ -190,10 +236,11 @@ export default () => {
 					label={t`Starting in about ${minutes} minutes`}
 					style={{ ...styles.list }}
 					listEmptyStyle={styles.textWhite}
-					listEmptyText={t`no upcoming auctions`}
+					listEmptyText={t`no upcoming auctions...`}
 					loaderColor="white"
 					action={() => undefined}
 					horizontal
+					ListEmptyButton={GoToSearch}
 				/>
 			</div>
 			<div>
@@ -205,10 +252,11 @@ export default () => {
 					RenderItem={ActiveRenderItem}
 					label={t`Auctions you've bid on`}
 					listEmptyStyle={styles.textWhite}
-					listEmptyText={t`place some bids`}
+					listEmptyText={t`place some bids...`}
 					style={styles.list}
 					loaderColor="white"
 					action={() => undefined}
+					ListEmptyButton={GoToSearch}
 				/>
 			</div>
 		</div>

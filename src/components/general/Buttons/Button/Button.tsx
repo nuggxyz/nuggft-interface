@@ -20,6 +20,7 @@ export type ButtonProps = {
 	rightIcon?: JSX.Element;
 	leftIcon?: JSX.Element;
 	hoverStyle?: React.CSSProperties;
+	hoverText?: string;
 	disabled?: boolean;
 	className?: string;
 	isHovering?: (hover: boolean) => void;
@@ -35,6 +36,7 @@ const Button: FunctionComponent<PropsWithChildren<ButtonProps>> = ({
 	leftIcon,
 	disabled = false,
 	isHovering,
+	hoverText,
 	hoverStyle,
 	className,
 	disableHoverAnimation = false,
@@ -72,7 +74,9 @@ const Button: FunctionComponent<PropsWithChildren<ButtonProps>> = ({
 			style={style}
 		>
 			{LeftIcon && <LeftIcon />}
-			{label ? <Text {...textProps}>{label}</Text> : null}
+			{label || (hover && hoverText) ? (
+				<Text {...textProps}>{hover && hoverText ? hoverText : label}</Text>
+			) : null}
 			{RightIcon && <RightIcon />}
 			{children}
 		</div>

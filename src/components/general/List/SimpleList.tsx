@@ -16,6 +16,7 @@ import usePrevious from '@src/hooks/usePrevious';
 import useIsVisible from '@src/hooks/useIsVisible';
 
 import styles from './List.styles';
+import useHorizontalScroll from '@src/client/hooks/useHorizontalScroll';
 
 export interface SimpleListRenderItemProps<ItemType, ExtraDataType, ActionArgType> {
 	item: ItemType;
@@ -41,6 +42,7 @@ export interface SimpleListProps<T, B, A> {
 	listEmptyText?: string;
 	labelStyle?: CSSProperties;
 	listEmptyStyle?: CSSProperties;
+	ListEmptyButton?: FunctionComponent<Record<string, unknown>>;
 	loaderColor?: string;
 	TitleButton?: FunctionComponent;
 	titleLoading?: boolean;
@@ -84,6 +86,7 @@ const SimpleList = <T, B, A>({
 	labelStyle,
 	loaderColor,
 	listEmptyStyle,
+	ListEmptyButton,
 	TitleButton,
 	titleLoading,
 }: SimpleListProps<T, B, A>) => {
@@ -134,45 +137,81 @@ const SimpleList = <T, B, A>({
 		[label, labelStyle, TitleButton, titleLoading, loaderColor],
 	);
 
+	const [Arrows] = useHorizontalScroll(ref);
+
 	return (
 		<>
 			<Label />
-			<div style={containerStyle} ref={ref}>
-				{data && data.length > 0 ? (
-					<>
-						{data.map((item, index) => (
-							<RenderItem
-								item={item}
-								key={`bro-${index}`}
-								index={index}
-								extraData={extraData}
-								action={action}
-							/>
-						))}
-					</>
-				) : (
-					<div
-						style={{
-							...styles.container,
-							justifyContent: 'center',
-						}}
-					>
-						{!loading && (
-							<Text
-								// weight="light"
-								size="small"
-								type="text"
-								textStyle={listEmptyStyle}
-							>
-								{listEmptyText || 'No items to display...'}
-							</Text>
-						)}
-					</div>
-				)}
-				<Loading />
-				{!isUndefinedOrNullOrNotFunction(onScrollEnd) && (
-					<EndOfListAnchor onScrollEnd={onScrollEnd} rootRef={ref} loading={loading} />
-				)}
+			<div
+				style={{
+					height: containerStyle.height,
+					width: containerStyle.width,
+					paddingTop: containerStyle.paddingTop,
+					paddingRight: containerStyle.paddingRight,
+					paddingLeft: containerStyle.paddingLeft,
+					paddingBottom: containerStyle.paddingBottom,
+					// padding: containerStyle.padding,
+					margin: containerStyle.margin,
+					marginTop: containerStyle.marginTop,
+					position: 'relative',
+				}}
+			>
+				{horizontal && Arrows}
+				<div
+					style={{
+						...containerStyle,
+						height: '100%',
+						width: '100%',
+						paddingTop: 0,
+						paddingRight: horizontal && Arrows ? '1.5rem' : 0,
+						paddingLeft: horizontal && Arrows ? '1.5rem' : 0,
+						paddingBottom: 0,
+						// padding: 0,
+						marginTop: 0,
+					}}
+					ref={ref}
+				>
+					{data && data.length > 0 ? (
+						<>
+							{data.map((item, index) => (
+								<RenderItem
+									item={item}
+									key={`bro-${index}`}
+									index={index}
+									extraData={extraData}
+									action={action}
+								/>
+							))}
+						</>
+					) : (
+						<div
+							style={{
+								...styles.container,
+								justifyContent: 'center',
+							}}
+						>
+							{!loading && (
+								<Text
+									// weight="light"
+									size="small"
+									type="text"
+									textStyle={listEmptyStyle}
+								>
+									{listEmptyText || 'No items to display...'}
+								</Text>
+							)}
+							{ListEmptyButton && <ListEmptyButton />}
+						</div>
+					)}
+					<Loading />
+					{!isUndefinedOrNullOrNotFunction(onScrollEnd) && (
+						<EndOfListAnchor
+							onScrollEnd={onScrollEnd}
+							rootRef={ref}
+							loading={loading}
+						/>
+					)}
+				</div>
 			</div>
 		</>
 	);

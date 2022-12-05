@@ -87,6 +87,7 @@ const styles = lib.layout.NLStyleSheetCreator({
 		padding: '.5rem .5rem',
 		background: lib.colors.gradient3Transparent,
 		boxShadow: lib.layout.boxShadow.medium,
+		position: 'absolute',
 	},
 	statistic: {
 		width: '31%',

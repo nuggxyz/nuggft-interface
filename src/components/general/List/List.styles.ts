@@ -6,10 +6,11 @@ const styles = lib.layout.NLStyleSheetCreator({
 		display: 'flex',
 		flexDirection: 'column',
 		width: '100%',
-		// height: '100%',
+		height: '100%',
 		justifyContent: 'flex-start',
 		alignItems: 'center',
 		overflow: 'scroll',
+		// position: 'relative',
 	},
 	label: {
 		fontWeight: 600,

@@ -17,6 +17,7 @@ import usePrevious from '@src/hooks/usePrevious';
 import useIsVisible from '@src/hooks/useIsVisible';
 
 import styles from './List.styles';
+import useHorizontalScroll from '@src/client/hooks/useHorizontalScroll';
 
 export interface ListRenderItemProps<ItemType, ExtraDataType, ActionArgType> {
 	item: ItemType;
@@ -178,15 +179,50 @@ const List = <T, B, A>({
 		[label, labelStyle, TitleButton, titleLoading, loaderColor],
 	);
 
+	const [Arrows] = useHorizontalScroll(ref);
+
 	return (
 		<>
 			<Label />
-			<div style={containerStyle} ref={ref}>
-				<ListCallback selected={selected} />
-				<Loading />
-				{!isUndefinedOrNullOrNotFunction(onScrollEnd) && (
-					<EndOfListAnchor onScrollEnd={onScrollEnd} rootRef={ref} loading={loading} />
-				)}
+			<div
+				style={{
+					height: containerStyle.height,
+					width: containerStyle.width,
+					// padding: containerStyle.padding,
+					paddingTop: containerStyle.paddingTop,
+					paddingRight: containerStyle.paddingRight,
+					paddingLeft: containerStyle.paddingLeft,
+					paddingBottom: containerStyle.paddingBottom,
+					margin: containerStyle.margin,
+					marginTop: containerStyle.marginTop,
+					position: 'relative',
+				}}
+			>
+				{horizontal && Arrows}
+				<div
+					style={{
+						...containerStyle,
+						height: '100%',
+						width: '100%',
+						// padding: 0,
+						paddingTop: 0,
+						paddingRight: horizontal && Arrows ? '1.5rem' : 0,
+						paddingLeft: horizontal && Arrows ? '1.5rem' : 0,
+						paddingBottom: 0,
+						marginTop: 0,
+					}}
+					ref={ref}
+				>
+					<ListCallback selected={selected} />
+					<Loading />
+					{!isUndefinedOrNullOrNotFunction(onScrollEnd) && (
+						<EndOfListAnchor
+							onScrollEnd={onScrollEnd}
+							rootRef={ref}
+							loading={loading}
+						/>
+					)}
+				</div>
 			</div>
 		</>
 	);
