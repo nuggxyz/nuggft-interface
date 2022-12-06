@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-11-15 18:50+0000\n"
+"POT-Creation-Date: 2022-12-05 11:15+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Danish\n"
-"PO-Revision-Date: 2022-11-16 06:05\n"
+"PO-Revision-Date: 2022-12-06 06:04\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
@@ -233,6 +233,10 @@ msgstr ""
 msgid "FLOOR"
 msgstr ""
 
+#: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
+msgid "Find auctions to bid on"
+msgstr ""
+
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimRenderItem.tsx
 msgid "For {0}"
 msgstr ""
@@ -251,6 +255,14 @@ msgstr ""
 
 #: src/components/nugg/RingAbout/OfferButton.tsx
 msgid "Go to current auction"
+msgstr ""
+
+#: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
+msgid "Go to sale"
+msgstr ""
+
+#: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
+msgid "Go to search"
 msgstr ""
 
 #: src/components/nugg/ViewingNugg/ActiveSwap.tsx
@@ -1207,7 +1219,7 @@ msgid "no ongoing auctions"
 msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
-msgid "no upcoming auctions"
+msgid "no upcoming auctions..."
 msgstr ""
 
 #: src/components/nuggbook/pages/tldr/Tldr_5.tsx
@@ -1291,7 +1303,7 @@ msgid "place offer"
 msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
-msgid "place some bids"
+msgid "place some bids..."
 msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_5.tsx
