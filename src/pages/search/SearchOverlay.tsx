@@ -5,9 +5,7 @@ import { useMatch, useNavigate } from 'react-router-dom';
 import NuggDexSearchList from '@src/components/nugg/NuggDex/NuggDexSearchList/NuggDexSearchList';
 import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
 import client from '@src/client';
-import useDimensions from '@src/client/hooks/useDimensions';
 import lib from '@src/lib';
-// import useBlur from '@src/hooks/useBlur';
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import { useOverlayRouteStyle } from '@src/lib/router';
 
@@ -23,7 +21,8 @@ const styles = lib.layout.NLStyleSheetCreator({
 	},
 	nuggDexContainer: {
 		display: 'flex',
-		width: '45%',
+		width: '50%',
+		maxWidth: '100vh',
 		height: '100%',
 		flexDirection: 'column',
 		justifyContent: 'center',
@@ -31,7 +30,8 @@ const styles = lib.layout.NLStyleSheetCreator({
 	},
 	tokenContainer: {
 		display: 'flex',
-		width: '45%',
+		width: '50%',
+		maxWidth: '100vh',
 		height: '100%',
 		flexDirection: 'column',
 		justifyContent: 'center',
@@ -41,8 +41,6 @@ const styles = lib.layout.NLStyleSheetCreator({
 });
 
 const SearchOverlay: FunctionComponent<Props> = () => {
-	const [screenType] = useDimensions();
-
 	const isPageLoaded = client.live.pageIsLoaded();
 
 	const setPageIsLoaded = client.mutate.setPageIsLoaded();
@@ -86,7 +84,8 @@ const SearchOverlay: FunctionComponent<Props> = () => {
 				role="button"
 				style={{
 					...styles.nuggDexContainer,
-					...(screenType === 'tablet' ? { width: '50%' } : {}),
+					width: '50%',
+					maxWidth: '100vh',
 				}}
 				onClick={(e) => e.stopPropagation()}
 			>
@@ -97,7 +96,8 @@ const SearchOverlay: FunctionComponent<Props> = () => {
 				role="button"
 				style={{
 					...styles.tokenContainer,
-					...(screenType === 'tablet' ? { width: '50%' } : {}),
+					width: '50%',
+					maxWidth: '100vh',
 				}}
 				onClick={(e) => e.stopPropagation()}
 			>

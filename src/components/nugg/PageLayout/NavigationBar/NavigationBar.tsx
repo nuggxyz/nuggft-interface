@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC } from 'react';
 import { animated } from '@react-spring/web';
 import { useMatch, useNavigate } from 'react-router-dom';
 
@@ -12,6 +12,10 @@ import client from '@src/client';
 import Text from '@src/components/general/Texts/Text/Text';
 import lib from '@src/lib';
 import { t } from '@lingui/macro';
+import useBlur from '@src/hooks/useBlur';
+import Button from '@src/components/general/Buttons/Button/Button';
+import { IoClose } from 'react-icons/io5';
+import useAnimateOpacity from '@src/hooks/useAnimateOpacity';
 
 type Props = {
 	showBackButton?: boolean;
@@ -19,25 +23,25 @@ type Props = {
 
 const NavigationBar: FC<Props> = () => {
 	const navigate = useNavigate();
-	const isHome = useMatch('swap/:id');
+	const isView = useMatch({ path: 'view', end: false });
+	const blur = useBlur(['live', 'swap/:id']);
 	const epoch = client.epoch.active.useId();
-
-	const onClick = useCallback(() => {
-		if (!isHome?.params.id) navigate('/');
-	}, [isHome, navigate]);
-
+	const buttonStyle = useAnimateOpacity(!!isView, {
+		position: 'absolute',
+		padding: '.4rem',
+		background: lib.colors.nuggRedSemiTransparent,
+		borderRadius: '100px',
+		color: 'white',
+		right: '4%',
+		boxShadow: lib.layout.boxShadow.basic,
+	});
 	return (
 		<animated.div
 			style={{
 				...styles.navBarContainer,
 			}}
 		>
-			<div
-				role="button"
-				aria-hidden="true"
-				style={{ ...styles.navBarBackground }}
-				onClick={onClick}
-			/>
+			<div role="button" aria-hidden="true" style={{ ...styles.navBarBackground }} />
 			<div
 				style={{
 					...styles.searchBarContainer,
@@ -63,7 +67,6 @@ const NavigationBar: FC<Props> = () => {
 					<Text>{epoch}</Text>
 				</div>
 			</div>
-
 			<div
 				style={{
 					...styles.linkAccountContainer,
@@ -71,9 +74,15 @@ const NavigationBar: FC<Props> = () => {
 				}}
 			>
 				<FloorPrice />
-
-				<AccountViewer />
+				<animated.div style={blur}>
+					<AccountViewer />
+				</animated.div>
 			</div>
+			<Button
+				onClick={() => navigate('/')}
+				buttonStyle={buttonStyle}
+				rightIcon={<IoClose size={30} />}
+			/>
 		</animated.div>
 	);
 };

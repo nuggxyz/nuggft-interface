@@ -189,7 +189,7 @@ const ActiveSwap: FunctionComponent<Props> = () => {
 					...lib.layout.presets.font.main.thicc,
 					fontSize: lib.fontSize.h2_small,
 				}}
-				label={t`Go to swap`}
+				label={t`Go to sale`}
 				rightIcon={<IoLocate color={lib.colors.green} size={30} />}
 				onClick={() => swap && tokenId && navigate(`/swap/${tokenId}`)}
 			/>

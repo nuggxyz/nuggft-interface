@@ -20,13 +20,14 @@ export const useNoMatchArray = (pattern: Parameters<typeof matchPath>[0][]) => {
 	);
 };
 
-export default (path: string[]): CSSPropertiesAnimated => {
+export default (path: Parameters<typeof matchPath>[0][]): CSSPropertiesAnimated => {
 	const openModal = client.modal.useOpen();
 
 	const match = useNoMatchArray(Array.isArray(path) ? path : [path]);
 
 	const style = useSpring({
 		filter: openModal || match ? 'blur(10px)' : 'blur(0px)',
+		pointerEvents: openModal || match ? ('none' as const) : ('auto' as const),
 	});
 
 	return style;
