@@ -16,6 +16,7 @@ import useBlur from '@src/hooks/useBlur';
 import Button from '@src/components/general/Buttons/Button/Button';
 import { IoClose } from 'react-icons/io5';
 import useAnimateOpacity from '@src/hooks/useAnimateOpacity';
+import Recents from './Recents';
 
 type Props = {
 	showBackButton?: boolean;
@@ -26,14 +27,8 @@ const NavigationBar: FC<Props> = () => {
 	const isView = useMatch({ path: 'view', end: false });
 	const blur = useBlur(['live', 'swap/:id']);
 	const epoch = client.epoch.active.useId();
-	const buttonStyle = useAnimateOpacity(!!isView, {
+	const opacity = useAnimateOpacity(!!isView, {
 		position: 'absolute',
-		padding: '.4rem',
-		background: lib.colors.nuggRedSemiTransparent,
-		borderRadius: '100px',
-		color: 'white',
-		right: '4%',
-		boxShadow: lib.layout.boxShadow.basic,
 	});
 	return (
 		<animated.div
@@ -80,9 +75,18 @@ const NavigationBar: FC<Props> = () => {
 			</div>
 			<Button
 				onClick={() => navigate('/')}
-				buttonStyle={buttonStyle}
+				buttonStyle={{
+					...opacity,
+					padding: '.4rem',
+					background: lib.colors.nuggRedSemiTransparent,
+					borderRadius: '100px',
+					color: 'white',
+					right: '4%',
+					boxShadow: lib.layout.boxShadow.basic,
+				}}
 				rightIcon={<IoClose size={30} />}
 			/>
+			<Recents style={{ ...opacity, right: '10%' }} />
 		</animated.div>
 	);
 };

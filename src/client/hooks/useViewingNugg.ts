@@ -5,11 +5,13 @@ import lib from '@src/lib';
 import useDimensions from '@src/client/hooks/useDimensions';
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 import emitter from '@src/emitter';
+import client from '..';
 
 const PREFIX = lib.constants.VIEWING_PREFIX;
 
 export default () => {
 	const navigate = useNavigate();
+	const addRecent = client.recents.useAddRecent();
 
 	const { goto: gotoMobile } = useMobileViewingNugg();
 
@@ -20,7 +22,10 @@ export default () => {
 			if (isPhone) {
 				gotoMobile(tokenId);
 				emitter.emit(emitter.events.RequestCloseMobileNavbar, {});
-			} else navigate(`/view/${PREFIX}/${tokenId}`);
+			} else {
+				addRecent(tokenId);
+				navigate(`/view/${PREFIX}/${tokenId}`);
+			}
 		},
 		[navigate, isPhone, gotoMobile],
 	);

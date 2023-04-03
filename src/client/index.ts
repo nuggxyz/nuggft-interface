@@ -18,6 +18,7 @@ import health from './health';
 import epoch from './epoch';
 import block from './block';
 import stake from './stake';
+import recents from './recents';
 import v2 from './v2';
 import v3 from './v3';
 import user from './user';
@@ -116,4 +117,5 @@ export default {
 	user,
 	all,
 	token,
+	recents,
 };
